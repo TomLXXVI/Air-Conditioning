@@ -1,0 +1,1481 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Combining Air Conditioning Processes &#8212; Air Conditioning Calculations with Python</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Design of a Single-Zone CAV System" href="cav_design.html" />
+    <link rel="prev" title="Basic Air Conditioning Processes" href="airco_proc_01.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="_static/logo.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Air Conditioning Calculations with Python</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    Air Conditioning Calculations with Python
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="airco_proc_01.html">
+   Basic Air Conditioning Processes
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Combining Air Conditioning Processes
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="cav_design.html">
+   Design of a Single-Zone CAV System
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/TomLXXVI/Air-Conditioning/master?urlpath=tree/airco_proc_02.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/TomLXXVI/Air-Conditioning"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="headerbtn__text-container">repository</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/TomLXXVI/Air-Conditioning/issues/new?title=Issue%20on%20page%20%2Fairco_proc_02.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="_sources/airco_proc_02.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#adiabatic-mixing-and-heating">
+   1. Adiabatic Mixing and Heating
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#adiabatic-mixing-and-cooling">
+   2. Adiabatic Mixing and Cooling
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#space-cooling">
+   3. Space Cooling
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#space-cooling-with-reheat">
+   4. Space Cooling with Reheat
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#space-cooling-with-ventilation-and-return-air-bypass">
+   5. Space Cooling with Ventilation and Return Air Bypass
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#space-heating-and-humidification">
+   6. Space Heating and Humidification
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Combining Air Conditioning Processes</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#adiabatic-mixing-and-heating">
+   1. Adiabatic Mixing and Heating
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#adiabatic-mixing-and-cooling">
+   2. Adiabatic Mixing and Cooling
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#space-cooling">
+   3. Space Cooling
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#space-cooling-with-reheat">
+   4. Space Cooling with Reheat
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#space-cooling-with-ventilation-and-return-air-bypass">
+   5. Space Cooling with Ventilation and Return Air Bypass
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#space-heating-and-humidification">
+   6. Space Heating and Humidification
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="combining-air-conditioning-processes">
+<h1>Combining Air Conditioning Processes<a class="headerlink" href="#combining-air-conditioning-processes" title="Permalink to this headline">#</a></h1>
+<hr class="docutils" />
+<div class="cell tag_remove-input docutils container">
+</div>
+<p>This notebook further explores the use of the <code class="docutils literal notranslate"><span class="pre">AirConditioningProcess</span></code> class and the <code class="docutils literal notranslate"><span class="pre">AdiabaticMixing</span></code> class by solving a few sample exercises from the book <strong>Principles of Heating, Ventilation and Air Conditioning</strong> by <em>Nihal E Wijeysundera</em> (2016), Chapter 5, in which several air conditioning processes are combined.</p>
+<p>First we import what we will need further on:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">hvac</span> <span class="kn">import</span> <span class="n">Quantity</span>
+<span class="kn">from</span> <span class="nn">hvac.fluids</span> <span class="kn">import</span> <span class="n">HumidAir</span><span class="p">,</span> <span class="n">Fluid</span>
+<span class="kn">from</span> <span class="nn">hvac.charts</span> <span class="kn">import</span> <span class="n">PsychrometricChart</span><span class="p">,</span> <span class="n">StatePoint</span>
+<span class="kn">from</span> <span class="nn">hvac.air_conditioning</span> <span class="kn">import</span> <span class="n">AirConditioningProcess</span><span class="p">,</span> <span class="n">AirStream</span><span class="p">,</span> <span class="n">AdiabaticMixing</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Q_</span> <span class="o">=</span> <span class="n">Quantity</span>
+<span class="n">Water</span> <span class="o">=</span> <span class="n">Fluid</span><span class="p">(</span><span class="s1">&#39;Water&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="adiabatic-mixing-and-heating">
+<h2>1. Adiabatic Mixing and Heating<a class="headerlink" href="#adiabatic-mixing-and-heating" title="Permalink to this headline">#</a></h2>
+<p><em>In a winter air conditioning system, outdoor air at 2°C and 20% relative humidity is mixed with return air at 23°C and 40% relative humidity. The ratio of the dry air mass flow rates of outdoor air to supply air is 1:4. The supply air is heated sensibly to a dry-bulb temperature of 35°C before being supplied to the space at the rate of 30 kg of dry air per minute. The pressure is constant at 101.3 kPa. Calculate (1) the wet-bulb temperature of the air after the mixing process, (2) the relative humidity of the air supplied to the space, and (3) the rate of heat input to the heater.</em></p>
+<p><strong>Outdoor air</strong></p>
+<ul class="simple">
+<li><p>dry-bulb temperature <code class="docutils literal notranslate"><span class="pre">Tdb</span></code> = 2°C</p></li>
+<li><p>relative humidity <code class="docutils literal notranslate"><span class="pre">RH</span></code> = 20%</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">outdoor_air_state</span> <span class="o">=</span> <span class="n">HumidAir</span><span class="p">(</span><span class="n">Tdb</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="s1">&#39;degC&#39;</span><span class="p">),</span> <span class="n">RH</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="s1">&#39;pct&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Return air</strong></p>
+<ul class="simple">
+<li><p>dry-bulb temperature <code class="docutils literal notranslate"><span class="pre">Tdb</span></code> = 23°C</p></li>
+<li><p>relative humidity <code class="docutils literal notranslate"><span class="pre">RH</span></code> = 40%</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">return_air_state</span> <span class="o">=</span> <span class="n">HumidAir</span><span class="p">(</span><span class="n">Tdb</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">23.0</span><span class="p">,</span> <span class="s1">&#39;degC&#39;</span><span class="p">),</span> <span class="n">RH</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="s1">&#39;pct&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Dry air mass flow rates</strong></p>
+<ul class="simple">
+<li><p>outdoor air = 0.25 x 30.0 kg/min</p></li>
+<li><p>return air = 0.75 x 30.0 kg/min</p></li>
+<li><p>supply air = 30.0 kg/min</p></li>
+</ul>
+<p><strong>Adiabatic mixing</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">outdoor_air</span> <span class="o">=</span> <span class="n">AirStream</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">outdoor_air_state</span><span class="p">,</span> <span class="n">m_da</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">0.25</span> <span class="o">*</span> <span class="mf">30.0</span><span class="p">,</span> <span class="s1">&#39;kg / min&#39;</span><span class="p">))</span>
+<span class="n">return_air</span> <span class="o">=</span> <span class="n">AirStream</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">return_air_state</span><span class="p">,</span> <span class="n">m_da</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">0.75</span> <span class="o">*</span> <span class="mf">30.0</span><span class="p">,</span> <span class="s1">&#39;kg / min&#39;</span><span class="p">))</span>
+<span class="n">mixed_air</span> <span class="o">=</span> <span class="n">AirStream</span><span class="p">(</span><span class="n">m_da</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">30.0</span><span class="p">,</span> <span class="s1">&#39;kg / min&#39;</span><span class="p">))</span>
+
+<span class="n">mixing_chamber</span> <span class="o">=</span> <span class="n">AdiabaticMixing</span><span class="p">(</span><span class="n">in1</span><span class="o">=</span><span class="n">outdoor_air</span><span class="p">,</span> <span class="n">in2</span><span class="o">=</span><span class="n">return_air</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">mixed_air</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Mixed air at heating coil entrance</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mixed_air_state</span> <span class="o">=</span> <span class="n">mixing_chamber</span><span class="o">.</span><span class="n">stream_out</span><span class="o">.</span><span class="n">state</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;wet-bulb temperature of supply air before heater= &lt;b&gt;</span><span class="si">{</span><span class="n">mixed_air_state</span><span class="o">.</span><span class="n">Twb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;degC&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.1f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>wet-bulb temperature of supply air before heater= <b>11.1 °C</b></li></ul></div></div>
+</div>
+<p><strong>Supply air at heating coil exit</strong></p>
+<ul class="simple">
+<li><p>dry-bulb temperature <code class="docutils literal notranslate"><span class="pre">Tdb</span></code> of supply air after heater = 35°C</p></li>
+<li><p>sensible heating process: humidity ratio <code class="docutils literal notranslate"><span class="pre">W</span></code> remains constant</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">supply_air_state</span> <span class="o">=</span> <span class="n">HumidAir</span><span class="p">(</span><span class="n">Tdb</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">35.0</span><span class="p">,</span> <span class="s1">&#39;degC&#39;</span><span class="p">),</span> <span class="n">W</span><span class="o">=</span><span class="n">mixed_air_state</span><span class="o">.</span><span class="n">W</span><span class="p">)</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;relative humidity of supply air after heater= &lt;b&gt;</span><span class="si">{</span><span class="n">supply_air_state</span><span class="o">.</span><span class="n">RH</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;pct&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>relative humidity of supply air after heater= <b>16 %</b></li></ul></div></div>
+</div>
+<p><strong>Heating coil</strong></p>
+<p>In a sensible heating process there is no water transfer to the air stream. Therefore, we can set the mass transfer of water <code class="docutils literal notranslate"><span class="pre">m_w</span></code> and the enthalpy of water <code class="docutils literal notranslate"><span class="pre">h_w</span></code> to zero.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">heater</span> <span class="o">=</span> <span class="n">AirConditioningProcess</span><span class="p">(</span>
+    <span class="n">air_in</span><span class="o">=</span><span class="n">mixed_air_state</span><span class="p">,</span>
+    <span class="n">air_out</span><span class="o">=</span><span class="n">supply_air_state</span><span class="p">,</span>
+    <span class="n">m_da</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">30.0</span><span class="p">,</span> <span class="s1">&#39;kg / min&#39;</span><span class="p">),</span>
+    <span class="n">m_w</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;kg / min&#39;</span><span class="p">),</span>
+    <span class="n">h_w</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;J / kg&#39;</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;rate of heat input to the heater = &lt;b&gt;</span><span class="si">{</span><span class="n">heater</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;kW&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>rate of heat input to the heater = <b>8.797 kW</b></li></ul></div></div>
+</div>
+</section>
+<section id="adiabatic-mixing-and-cooling">
+<h2>2. Adiabatic Mixing and Cooling<a class="headerlink" href="#adiabatic-mixing-and-cooling" title="Permalink to this headline">#</a></h2>
+<p><em>In a summer air conditioning system, 25% of the return air from a space at 30°C dry-bulb (db) temperature, and 22°C wet-bulb (wb) temperature is exhausted and an equal quantity of fresh air at 34°C db-temperature, and 28°C wb-temperature is mixed with the remaining return air. The mixture passes over a cooling coil whose coil-surface temperature (apparatus dew-point) is 8°C and the bypass factor is 0.25. The mass flow rate of dry air to the space is 0.8 kg/s. The pressure is constant at 101.3 kPa. Calculate (1) db-temperature and the relative humidity of the air leaving the cooling coil, (2) enthalpy-humidity ratio of the cooling process, and (3) the refrigeration capacity of the cooling coil.</em></p>
+<p><strong>Return air</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">return_air_state</span> <span class="o">=</span> <span class="n">HumidAir</span><span class="p">(</span><span class="n">Tdb</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">30.0</span><span class="p">,</span> <span class="s1">&#39;degC&#39;</span><span class="p">),</span> <span class="n">Twb</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">22.0</span><span class="p">,</span> <span class="s1">&#39;degC&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Outdoor air</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">outdoor_air_state</span> <span class="o">=</span> <span class="n">HumidAir</span><span class="p">(</span><span class="n">Tdb</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">34.0</span><span class="p">,</span> <span class="s1">&#39;degC&#39;</span><span class="p">),</span> <span class="n">Twb</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">28.0</span><span class="p">,</span> <span class="s1">&#39;degC&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Dry air mass flow rates</strong></p>
+<ul class="simple">
+<li><p>supply air to space = 0.8 kg/s</p></li>
+<li><p>outdoor air = 0.25 x 0.8 kg/s</p></li>
+<li><p>return air = 0.75 x 0.8 kg/s</p></li>
+</ul>
+<p><strong>Adiabatic mixing</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">outdoor_air</span> <span class="o">=</span> <span class="n">AirStream</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">outdoor_air_state</span><span class="p">,</span> <span class="n">m_da</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">0.25</span> <span class="o">*</span> <span class="mf">0.8</span><span class="p">,</span> <span class="s1">&#39;kg / s&#39;</span><span class="p">))</span>
+<span class="n">return_air</span> <span class="o">=</span> <span class="n">AirStream</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">return_air_state</span><span class="p">,</span> <span class="n">m_da</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">0.75</span> <span class="o">*</span> <span class="mf">0.8</span><span class="p">,</span> <span class="s1">&#39;kg / s&#39;</span><span class="p">))</span>
+<span class="n">mixed_air</span> <span class="o">=</span> <span class="n">AirStream</span><span class="p">(</span><span class="n">m_da</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">0.8</span><span class="p">,</span> <span class="s1">&#39;kg / s&#39;</span><span class="p">))</span>
+
+<span class="n">mixing_chamber</span> <span class="o">=</span> <span class="n">AdiabaticMixing</span><span class="p">(</span><span class="n">in1</span><span class="o">=</span><span class="n">outdoor_air</span><span class="p">,</span> <span class="n">in2</span><span class="o">=</span><span class="n">return_air</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">mixed_air</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Mixed air state at cooling coil entrance</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mixed_air_state</span> <span class="o">=</span> <span class="n">mixing_chamber</span><span class="o">.</span><span class="n">stream_out</span><span class="o">.</span><span class="n">state</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Cooling coil</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">air_cooler</span> <span class="o">=</span> <span class="n">AirConditioningProcess</span><span class="p">(</span>
+    <span class="n">air_in</span><span class="o">=</span><span class="n">mixed_air_state</span><span class="p">,</span>
+    <span class="n">ADP</span><span class="o">=</span><span class="n">HumidAir</span><span class="p">(</span><span class="n">Tdb</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">8.0</span><span class="p">,</span> <span class="s1">&#39;degC&#39;</span><span class="p">),</span> <span class="n">RH</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">100.0</span><span class="p">,</span> <span class="s1">&#39;pct&#39;</span><span class="p">)),</span>
+    <span class="n">beta</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="mf">0.25</span><span class="p">,</span> <span class="s1">&#39;frac&#39;</span><span class="p">),</span>  <span class="c1"># contact-factor = 1 - bypass-factor</span>
+    <span class="n">m_da</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">0.8</span><span class="p">,</span> <span class="s1">&#39;kg / s&#39;</span><span class="p">),</span>
+    <span class="n">h_w</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;J / kg&#39;</span><span class="p">)</span>  <span class="c1"># we ignore the enthalpy of condensing water from the air stream</span>
+<span class="p">)</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;refrigeration capacity of the cooling coil = &lt;b&gt;</span><span class="si">{</span><span class="n">air_cooler</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;kW&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>refrigeration capacity of the cooling coil = <b>-27.491 kW</b></li></ul></div></div>
+</div>
+<p><strong>Supply air state at cooling coil exit</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">supply_air</span> <span class="o">=</span> <span class="n">air_cooler</span><span class="o">.</span><span class="n">air_out</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;dry-bulb temperature of air leaving the cooler = &lt;b&gt;</span><span class="si">{</span><span class="n">supply_air</span><span class="o">.</span><span class="n">Tdb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;degC&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.1f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;relative humidity of air leaving the cooler = &lt;b&gt;</span><span class="si">{</span><span class="n">supply_air</span><span class="o">.</span><span class="n">RH</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;pct&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>dry-bulb temperature of air leaving the cooler = <b>13.8 °C</b></li><li>relative humidity of air leaving the cooler = <b>90 %</b></li></ul></div></div>
+</div>
+<p><strong>Psychrometric chart</strong></p>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">psych_chart</span> <span class="o">=</span> <span class="n">PsychrometricChart</span><span class="p">(</span><span class="n">fig_size</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="n">psych_chart</span><span class="o">.</span><span class="n">plot_process</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;adiabatic mixing&#39;</span><span class="p">,</span>
+    <span class="n">start_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">outdoor_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">outdoor_air</span><span class="o">.</span><span class="n">W</span><span class="p">),</span>
+    <span class="n">end_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">return_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">return_air</span><span class="o">.</span><span class="n">W</span><span class="p">),</span>
+    <span class="n">mix_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">mixed_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">mixed_air</span><span class="o">.</span><span class="n">W</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">psych_chart</span><span class="o">.</span><span class="n">plot_process</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;air cooler&#39;</span><span class="p">,</span>
+    <span class="n">start_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">mixed_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">mixed_air</span><span class="o">.</span><span class="n">W</span><span class="p">),</span>
+    <span class="n">end_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">supply_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">supply_air</span><span class="o">.</span><span class="n">W</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">psych_chart</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/airco_proc_02_37_0.png" src="_images/airco_proc_02_37_0.png" />
+</div>
+</div>
+</section>
+<section id="space-cooling">
+<h2>3. Space Cooling<a class="headerlink" href="#space-cooling" title="Permalink to this headline">#</a></h2>
+<p><em>The rate of sensible heat gain and the rate of moisture gain by a space are 23 kW and 0.0024 kg/s respectively. The space is maintained at 24°C db-temperature and 50 % relative humidity. The air supplied to the space is at a db-temperature of 15°C. Assume that the moisture entering the space has an enthalpy of 2555 kJ/kg. The pressure is constant at 101.3 kPa. Calculate (1) the relative humidity, the wb-temperature, and the dry air mass flow rate of air supplied, (2) the refrigeration capacity of the cooling coil, and (3) the bypass factor and the apparatus dew-point of the cooling coil.</em></p>
+<p><strong>Sensible and latent heat load of the room</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Q_sen</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="mf">23.0</span><span class="p">,</span> <span class="s1">&#39;kW&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The latent heat gain of the room can be approximated by <span class="math notranslate nohighlight">\(Q_{lat} = m_w . h_{wg}\)</span> wherein <span class="math notranslate nohighlight">\(h_{wg}\)</span> is the mean enthalpy of water vapor between 0 and 60 °C and equal to 2555 kJ/kg.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Q_lat</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="mf">0.0024</span><span class="p">,</span> <span class="s1">&#39;kg / s&#39;</span><span class="p">)</span> <span class="o">*</span> <span class="n">Q_</span><span class="p">(</span><span class="mi">2555</span><span class="p">,</span> <span class="s1">&#39;kJ / kg&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>From the sensible and latent heat gain, the sensible heat ratio (SHR) of the room can be determined:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">SHR</span> <span class="o">=</span> <span class="n">Q_sen</span> <span class="o">/</span> <span class="p">(</span><span class="n">Q_sen</span> <span class="o">+</span> <span class="n">Q_lat</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;latent heat load of the room = &lt;b&gt;</span><span class="si">{</span><span class="n">Q_lat</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;kW&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;sensible heat ratio of the room = &lt;b&gt;</span><span class="si">{</span><span class="n">SHR</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;pct&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>latent heat load of the room = <b>6.132 kW</b></li><li>sensible heat ratio of the room = <b>78.951 %</b></li></ul></div></div>
+</div>
+<p><strong>Supply air dry-bulb temperature</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">T_sup</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="mf">15.0</span><span class="p">,</span> <span class="s1">&#39;degC&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Room air = return air to cooler</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">return_air</span> <span class="o">=</span> <span class="n">HumidAir</span><span class="p">(</span><span class="n">Tdb</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">24.0</span><span class="p">,</span> <span class="s1">&#39;degC&#39;</span><span class="p">),</span> <span class="n">RH</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">50.0</span><span class="p">,</span> <span class="s1">&#39;pct&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Space condition line</strong></p>
+<p>The SHR of the room determines the slope <span class="math notranslate nohighlight">\(\Delta W / \Delta T\)</span> of the “space condition line” in the psychrometric diagram. The state of the supply air must lie on this line in order to compensate the sensible and latent cooling load of the space. As the dry-bulb temperature of the supply air is given and the state of the room air is known, the equation of the space condition line can be solved for the missing humidity ratio of the supply air.</p>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">hvac.air_conditioning</span> <span class="kn">import</span> <span class="n">SpaceConditionLine</span>
+
+<span class="n">space_cond_line</span> <span class="o">=</span> <span class="n">SpaceConditionLine</span><span class="p">(</span>
+    <span class="n">space_air</span><span class="o">=</span><span class="n">return_air</span><span class="p">,</span>
+    <span class="n">Q_sen</span><span class="o">=</span><span class="n">Q_sen</span><span class="p">,</span>
+    <span class="n">Q_lat</span><span class="o">=</span><span class="n">Q_lat</span>
+<span class="p">)</span>
+
+<span class="n">psych_chart</span> <span class="o">=</span> <span class="n">PsychrometricChart</span><span class="p">(</span><span class="n">fig_size</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">psych_chart</span><span class="o">.</span><span class="n">plot_space_condition_line</span><span class="p">(</span>
+    <span class="n">start_point</span><span class="o">=</span><span class="n">space_cond_line</span><span class="o">.</span><span class="n">start_point</span><span class="p">(),</span>
+    <span class="n">end_point</span><span class="o">=</span><span class="n">space_cond_line</span><span class="o">.</span><span class="n">end_point</span><span class="p">(),</span>
+    <span class="n">space_point</span><span class="o">=</span><span class="n">space_cond_line</span><span class="o">.</span><span class="n">space_point</span><span class="p">()</span>
+<span class="p">)</span>
+<span class="n">psych_chart</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/airco_proc_02_52_0.png" src="_images/airco_proc_02_52_0.png" />
+</div>
+</div>
+<p>From the sensible heat balance, also the mass flow rate of dry air <code class="docutils literal notranslate"><span class="pre">m_da</span></code> can be solved for, knowing the dry-bulb temperatures of supply and return air and the sensible heat load <code class="docutils literal notranslate"><span class="pre">Q_sen</span></code> of the room.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">room</span> <span class="o">=</span> <span class="n">AirConditioningProcess</span><span class="p">(</span>
+    <span class="n">T_ai</span><span class="o">=</span><span class="n">T_sup</span><span class="p">,</span>
+    <span class="n">air_out</span><span class="o">=</span><span class="n">return_air</span><span class="p">,</span>
+    <span class="n">SHR</span><span class="o">=</span><span class="n">SHR</span><span class="p">,</span>
+    <span class="n">Q_sen</span><span class="o">=</span><span class="n">Q_sen</span>
+<span class="p">)</span>
+
+<span class="n">supply_air</span> <span class="o">=</span> <span class="n">room</span><span class="o">.</span><span class="n">air_in</span>
+
+<span class="n">m_da</span> <span class="o">=</span> <span class="n">room</span><span class="o">.</span><span class="n">m_da</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;relative humidity of air supplied = &lt;b&gt;</span><span class="si">{</span><span class="n">supply_air</span><span class="o">.</span><span class="n">RH</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;pct&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;wet-bulb temperature of air supplied = &lt;b&gt;</span><span class="si">{</span><span class="n">supply_air</span><span class="o">.</span><span class="n">Twb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;degC&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.1f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;mass flow rate of dry air = &lt;b&gt;</span><span class="si">{</span><span class="n">m_da</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;kg / s&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>relative humidity of air supplied = <b>79 %</b></li><li>wet-bulb temperature of air supplied = <b>12.8 °C</b></li><li>mass flow rate of dry air = <b>2.505 kg/s</b></li></ul></div></div>
+</div>
+<p><strong>Refrigeration capacity of the air cooler</strong></p>
+<p>The return air from the room enters the cooler and the supply air to the room leaves the cooler. We will ignore the enthalpy of the condensate in the cooler, so we set <code class="docutils literal notranslate"><span class="pre">h_w</span></code> to zero.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cooler</span> <span class="o">=</span> <span class="n">AirConditioningProcess</span><span class="p">(</span>
+    <span class="n">air_in</span><span class="o">=</span><span class="n">return_air</span><span class="p">,</span>
+    <span class="n">air_out</span><span class="o">=</span><span class="n">supply_air</span><span class="p">,</span>
+    <span class="n">m_da</span><span class="o">=</span><span class="n">m_da</span><span class="p">,</span>
+    <span class="n">h_w</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;J / kg&#39;</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;refrigeration capacity of cooler = &lt;b&gt;</span><span class="si">{</span><span class="n">cooler</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;kW&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;ADP of cooler = &lt;b&gt;</span><span class="si">{</span><span class="n">cooler</span><span class="o">.</span><span class="n">ADP</span><span class="o">.</span><span class="n">Tdb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;degC&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.1f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">cooler</span><span class="o">.</span><span class="n">ADP</span><span class="o">.</span><span class="n">W</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;g / kg&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;bypass factor of cooler = &lt;b&gt;</span><span class="si">{</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">cooler</span><span class="o">.</span><span class="n">beta</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;pct&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.1f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>refrigeration capacity of cooler = <b>-29.149 kW</b></li><li>ADP of cooler = <b>10.5 °C, 8 g/kg</b></li><li>bypass factor of cooler = <b>33.6 %</b></li></ul></div></div>
+</div>
+<p><strong>Psychrometric chart</strong></p>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">space_cond_line</span> <span class="o">=</span> <span class="n">SpaceConditionLine</span><span class="p">(</span>
+    <span class="n">space_air</span><span class="o">=</span><span class="n">return_air</span><span class="p">,</span>
+    <span class="n">Q_sen</span><span class="o">=</span><span class="n">Q_sen</span><span class="p">,</span>
+    <span class="n">Q_lat</span><span class="o">=</span><span class="n">Q_lat</span>
+<span class="p">)</span>
+
+<span class="n">psych_chart</span> <span class="o">=</span> <span class="n">PsychrometricChart</span><span class="p">(</span><span class="n">fig_size</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="n">psych_chart</span><span class="o">.</span><span class="n">plot_space_condition_line</span><span class="p">(</span>
+    <span class="n">start_point</span><span class="o">=</span><span class="n">space_cond_line</span><span class="o">.</span><span class="n">start_point</span><span class="p">(),</span>
+    <span class="n">end_point</span><span class="o">=</span><span class="n">space_cond_line</span><span class="o">.</span><span class="n">end_point</span><span class="p">(),</span>
+    <span class="n">space_point</span><span class="o">=</span><span class="n">space_cond_line</span><span class="o">.</span><span class="n">space_point</span><span class="p">()</span>
+<span class="p">)</span>
+
+<span class="n">psych_chart</span><span class="o">.</span><span class="n">plot_process</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;air cooler&#39;</span><span class="p">,</span>
+    <span class="n">start_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">return_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">return_air</span><span class="o">.</span><span class="n">W</span><span class="p">),</span>
+    <span class="n">end_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">supply_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">supply_air</span><span class="o">.</span><span class="n">W</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">psych_chart</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/airco_proc_02_58_0.png" src="_images/airco_proc_02_58_0.png" />
+</div>
+</div>
+</section>
+<section id="space-cooling-with-reheat">
+<h2>4. Space Cooling with Reheat<a class="headerlink" href="#space-cooling-with-reheat" title="Permalink to this headline">#</a></h2>
+<p><em>A summer air conditioning system, consisting of a cooling coil and a reheat coil, supplies air to a space maintained at 24°C db-temperature and 18°C wb-temperature. The sensible and latent heat loads on the space are 11 kW and 10 kW respectively. The conditions of the air leaving the cooling coil are 12°C db-temperature and 90% relative humidity. The pressure is constant at 101.3 kPa. Determine (1) the db-temperature and wb-temperature of the supply air, (2) the dry air mass flow rate of the air supplied, (3) the refrigeration capacity of the cooling coil, (4) the rate of heat input by the reheat coil, and (5) the bypass factor and apparatus dew-point of the cooling coil.</em></p>
+<p><img alt="scheme" src="_images/cooling_with_reheat.png" /></p>
+<p><strong>Space air</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">space_air</span> <span class="o">=</span> <span class="n">HumidAir</span><span class="p">(</span><span class="n">Tdb</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">24.0</span><span class="p">,</span> <span class="s1">&#39;degC&#39;</span><span class="p">),</span> <span class="n">Twb</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">18.0</span><span class="p">,</span> <span class="s1">&#39;degC&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Sensible and latent heat load of space</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Q_sen</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="s1">&#39;kW&#39;</span><span class="p">)</span>
+<span class="n">Q_lat</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;kW&#39;</span><span class="p">)</span>
+<span class="n">SHR</span> <span class="o">=</span> <span class="n">Q_sen</span> <span class="o">/</span> <span class="p">(</span><span class="n">Q_sen</span> <span class="o">+</span> <span class="n">Q_lat</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Space condition line</strong></p>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">space_cond_line</span> <span class="o">=</span> <span class="n">SpaceConditionLine</span><span class="p">(</span>
+    <span class="n">space_air</span><span class="o">=</span><span class="n">space_air</span><span class="p">,</span>
+    <span class="n">Q_sen</span><span class="o">=</span><span class="n">Q_sen</span><span class="p">,</span>
+    <span class="n">Q_lat</span><span class="o">=</span><span class="n">Q_lat</span>
+<span class="p">)</span>
+
+<span class="n">psych_chart</span> <span class="o">=</span> <span class="n">PsychrometricChart</span><span class="p">(</span><span class="n">fig_size</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">psych_chart</span><span class="o">.</span><span class="n">plot_space_condition_line</span><span class="p">(</span>
+    <span class="n">start_point</span><span class="o">=</span><span class="n">space_cond_line</span><span class="o">.</span><span class="n">start_point</span><span class="p">(),</span>
+    <span class="n">end_point</span><span class="o">=</span><span class="n">space_cond_line</span><span class="o">.</span><span class="n">end_point</span><span class="p">(),</span>
+    <span class="n">space_point</span><span class="o">=</span><span class="n">space_cond_line</span><span class="o">.</span><span class="n">space_point</span><span class="p">()</span>
+<span class="p">)</span>
+<span class="n">psych_chart</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/airco_proc_02_67_0.png" src="_images/airco_proc_02_67_0.png" />
+</div>
+</div>
+<blockquote>
+<div><p>We note that the space condition line does not intersect the saturation line, while air cooling implies that the leaving air from the air cooler lies on a straight line that intersects the saturation line in the ADP of the air cooler.</p>
+</div></blockquote>
+<p><strong>Air cooler outlet</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cooler_out</span> <span class="o">=</span> <span class="n">HumidAir</span><span class="p">(</span><span class="n">Tdb</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">12.0</span><span class="p">,</span> <span class="s1">&#39;degC&#39;</span><span class="p">),</span> <span class="n">RH</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">90.0</span><span class="p">,</span> <span class="s1">&#39;pct&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>State and mass flow rate of supply air to the space</strong></p>
+<p>The state of the space air (<code class="docutils literal notranslate"><span class="pre">air_out</span></code>) and the SHR of the space determine the “space condition line”. The supply air state must lie on this line to compensate for the sensible as well as the latent cooling load of the space. The humidity ratio of the entering supply air (<code class="docutils literal notranslate"><span class="pre">W_ai</span></code>) is known, as the humidity ratio of the air leaving the air cooler will remain constant through the reheat coil, which is a sensible heating process. From the equation of the space condition line, the unknown dry-bulb temperature of the supply air can be solved for. Putting this result in the sensible heat balance of the space, will give us also the required mass flow rate of supply air, as we know the sensible heat load (<code class="docutils literal notranslate"><span class="pre">Q_sen</span></code>) of the space.</p>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">space_cond_line</span> <span class="o">=</span> <span class="n">SpaceConditionLine</span><span class="p">(</span>
+    <span class="n">space_air</span><span class="o">=</span><span class="n">space_air</span><span class="p">,</span>
+    <span class="n">Q_sen</span><span class="o">=</span><span class="n">Q_sen</span><span class="p">,</span>
+    <span class="n">Q_lat</span><span class="o">=</span><span class="n">Q_lat</span>
+<span class="p">)</span>
+
+<span class="n">psych_chart</span> <span class="o">=</span> <span class="n">PsychrometricChart</span><span class="p">(</span><span class="n">fig_size</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">psych_chart</span><span class="o">.</span><span class="n">plot_space_condition_line</span><span class="p">(</span>
+    <span class="n">start_point</span><span class="o">=</span><span class="n">space_cond_line</span><span class="o">.</span><span class="n">start_point</span><span class="p">(),</span>
+    <span class="n">end_point</span><span class="o">=</span><span class="n">space_cond_line</span><span class="o">.</span><span class="n">end_point</span><span class="p">(),</span>
+    <span class="n">space_point</span><span class="o">=</span><span class="n">space_cond_line</span><span class="o">.</span><span class="n">space_point</span><span class="p">()</span>
+<span class="p">)</span>
+<span class="n">psych_chart</span><span class="o">.</span><span class="n">plot_line</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;line&#39;</span><span class="p">,</span>
+    <span class="n">start_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">Q_</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;degC&#39;</span><span class="p">),</span> <span class="n">cooler_out</span><span class="o">.</span><span class="n">W</span><span class="p">),</span>
+    <span class="n">end_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">Q_</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="s1">&#39;degC&#39;</span><span class="p">),</span> <span class="n">cooler_out</span><span class="o">.</span><span class="n">W</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">psych_chart</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/airco_proc_02_72_0.png" src="_images/airco_proc_02_72_0.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">space</span> <span class="o">=</span> <span class="n">AirConditioningProcess</span><span class="p">(</span>
+    <span class="n">air_out</span><span class="o">=</span><span class="n">space_air</span><span class="p">,</span>
+    <span class="n">W_ai</span><span class="o">=</span><span class="n">cooler_out</span><span class="o">.</span><span class="n">W</span><span class="p">,</span>
+    <span class="n">SHR</span><span class="o">=</span><span class="n">SHR</span><span class="p">,</span>
+    <span class="n">Q_sen</span><span class="o">=</span><span class="n">Q_sen</span>
+<span class="p">)</span>
+
+<span class="n">supply_air</span> <span class="o">=</span> <span class="n">space</span><span class="o">.</span><span class="n">air_in</span>
+
+<span class="n">m_da</span> <span class="o">=</span> <span class="n">space</span><span class="o">.</span><span class="n">m_da</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;dry-bulb temperature of supply air to space = &lt;b&gt;</span><span class="si">{</span><span class="n">supply_air</span><span class="o">.</span><span class="n">Tdb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;degC&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.1f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;wet-bulb temperature of supply air to space = &lt;b&gt;</span><span class="si">{</span><span class="n">supply_air</span><span class="o">.</span><span class="n">Twb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;degC&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.1f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;mass flow rate of dry air = &lt;b&gt;</span><span class="si">{</span><span class="n">m_da</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;kg / s&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>dry-bulb temperature of supply air to space = <b>16.8 °C</b></li><li>wet-bulb temperature of supply air to space = <b>13.1 °C</b></li><li>mass flow rate of dry air = <b>1.502 kg/s</b></li></ul></div></div>
+</div>
+<blockquote>
+<div><p>We note that the required supply air db-temperature is higher than the db-temperature of the air leaving the air cooler.</p>
+</div></blockquote>
+<p><strong>Air cooler</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cooler</span> <span class="o">=</span> <span class="n">AirConditioningProcess</span><span class="p">(</span>
+    <span class="n">air_in</span><span class="o">=</span><span class="n">space_air</span><span class="p">,</span>
+    <span class="n">air_out</span><span class="o">=</span><span class="n">cooler_out</span><span class="p">,</span>
+    <span class="n">m_da</span><span class="o">=</span><span class="n">m_da</span><span class="p">,</span>
+    <span class="n">h_w</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;J / kg&#39;</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;refrigeration capacity of air cooler = &lt;b&gt;</span><span class="si">{</span><span class="n">cooler</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;kW&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;apparatus dew-point of cooling coil = &lt;b&gt;</span><span class="si">{</span><span class="n">cooler</span><span class="o">.</span><span class="n">ADP</span><span class="o">.</span><span class="n">Tdb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;degC&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.1f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;bypass factor of air cooler = &lt;b&gt;</span><span class="si">{</span><span class="mi">1</span> <span class="o">-</span> <span class="n">cooler</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;frac&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.2f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>refrigeration capacity of air cooler = <b>-28.358 kW</b></li><li>apparatus dew-point of cooling coil = <b>9.3 °C</b></li><li>bypass factor of air cooler = <b>0.19</b></li></ul></div></div>
+</div>
+<p><strong>Reheat coil</strong></p>
+<p>We need to heat the air leaving the air cooler to the required supply air db-temperature.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reheater</span> <span class="o">=</span> <span class="n">AirConditioningProcess</span><span class="p">(</span>
+    <span class="n">air_in</span><span class="o">=</span><span class="n">cooler_out</span><span class="p">,</span>
+    <span class="n">air_out</span><span class="o">=</span><span class="n">supply_air</span><span class="p">,</span>
+    <span class="n">m_da</span><span class="o">=</span><span class="n">m_da</span><span class="p">,</span>
+    <span class="n">h_w</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;J / kg&#39;</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;rate of heat input by the reheat coil = &lt;b&gt;</span><span class="si">{</span><span class="n">reheater</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;kW&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>rate of heat input by the reheat coil = <b>7.385 kW</b></li></ul></div></div>
+</div>
+<p><strong>Check the overall energy balance</strong></p>
+<p>The sum of heat removed from the system by the cooling coil and the energy supplied by the reheating coil should balance the total heat load on the space (= <code class="docutils literal notranslate"><span class="pre">Q_sen</span></code> + <code class="docutils literal notranslate"><span class="pre">Q_lat</span></code>).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;Net heat removed from the system = &lt;b&gt;</span><span class="si">{</span><span class="n">cooler</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;kW&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">reheater</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;kW&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>Net heat removed from the system = <b>-20.973 kW</b></li></ul></div></div>
+</div>
+<p><strong>Psychrometric chart</strong></p>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">psych_chart</span> <span class="o">=</span> <span class="n">PsychrometricChart</span><span class="p">(</span><span class="n">fig_size</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="n">psych_chart</span><span class="o">.</span><span class="n">plot_process</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;room&#39;</span><span class="p">,</span>
+    <span class="n">start_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">supply_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">supply_air</span><span class="o">.</span><span class="n">W</span><span class="p">),</span>
+    <span class="n">end_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">space_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">space_air</span><span class="o">.</span><span class="n">W</span><span class="p">),</span>
+<span class="p">)</span>
+
+<span class="n">psych_chart</span><span class="o">.</span><span class="n">plot_process</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;air cooler&#39;</span><span class="p">,</span>
+    <span class="n">start_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">space_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">space_air</span><span class="o">.</span><span class="n">W</span><span class="p">),</span>
+    <span class="n">end_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">cooler_out</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">cooler_out</span><span class="o">.</span><span class="n">W</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">psych_chart</span><span class="o">.</span><span class="n">plot_process</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;reheater&#39;</span><span class="p">,</span>
+    <span class="n">start_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">cooler_out</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">cooler_out</span><span class="o">.</span><span class="n">W</span><span class="p">),</span>
+    <span class="n">end_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">supply_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">supply_air</span><span class="o">.</span><span class="n">W</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">psych_chart</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/airco_proc_02_82_0.png" src="_images/airco_proc_02_82_0.png" />
+</div>
+</div>
+</section>
+<section id="space-cooling-with-ventilation-and-return-air-bypass">
+<h2>5. Space Cooling with Ventilation and Return Air Bypass<a class="headerlink" href="#space-cooling-with-ventilation-and-return-air-bypass" title="Permalink to this headline">#</a></h2>
+<p><em>An air conditioning system supplying air to a space with a sensible heat load of 14 kW and a latent heat load of 9 kW has a cooling coil and a bypass path downstream of the cooling coil for direct recirculation of return air back to the space. The db-temperature of the space is maintained at 26°C. The dry air mass flow rate of supply air is 1.2 kg/s. Outdoor ventilation air at 34°C db-temperature and 50 % relative humidity is introduced into the system with a dry air mass flow rate of 0.26 kg/s. The air leaving the cooling coil is fully saturated at a db-temperature of 6°C. The pressure is constant at 101.3 kPa. Determine (1) db-temperature and relative humidity of the supply air to the space, (2) the wb-temperature of the space, (3) the temperature of the air entering the cooling coil, and (4) the refrigeration capacity of the cooling coil.</em></p>
+<p><img alt="scheme" src="_images/cooling_ventilation_bypass.png" /></p>
+<p><strong>Sensible and latent heat load of the space</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Q_sen</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="mf">14.0</span><span class="p">,</span> <span class="s1">&#39;kW&#39;</span><span class="p">)</span>
+<span class="n">Q_lat</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="mf">9.0</span><span class="p">,</span> <span class="s1">&#39;kW&#39;</span><span class="p">)</span>
+<span class="n">SHR</span> <span class="o">=</span> <span class="n">Q_sen</span> <span class="o">/</span> <span class="p">(</span><span class="n">Q_sen</span> <span class="o">+</span> <span class="n">Q_lat</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Dry air mass flow rate of supply air to the space</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">m_da_sup</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="mf">1.2</span><span class="p">,</span> <span class="s1">&#39;kg / s&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Dry-bulb temperature of space air (return air)</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">T_ret</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="mf">26.0</span><span class="p">,</span> <span class="s1">&#39;degC&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>State of outdoor ventilation air and mass flow rate of ventilation air</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ven_air</span> <span class="o">=</span> <span class="n">HumidAir</span><span class="p">(</span><span class="n">Tdb</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">34.0</span><span class="p">,</span> <span class="s1">&#39;degC&#39;</span><span class="p">),</span> <span class="n">RH</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="s1">&#39;pct&#39;</span><span class="p">))</span>
+<span class="n">m_da_ven</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="mf">0.26</span><span class="p">,</span> <span class="s1">&#39;kg / s&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>State of air leaving the cooling coil</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cooler_out_air</span> <span class="o">=</span> <span class="n">HumidAir</span><span class="p">(</span><span class="n">Tdb</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">6.0</span><span class="p">,</span> <span class="s1">&#39;degC&#39;</span><span class="p">),</span> <span class="n">RH</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;pct&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>State of space air (return air)</strong></p>
+<p>The state of the supply air to the room is determined by adiabatic mixing of cooled air from the cooling coil with return air that comes from the bypass path. In the psychrometric diagram the process of adiabatic mixing is represented by a straight line. The state of the supply air lies somewhere on this straight line that connects the state of the air at the cooler outlet (which is known: <code class="docutils literal notranslate"><span class="pre">cooler_out_air</span></code>) with the state of the return air (of which only the dry-bulb temperature <code class="docutils literal notranslate"><span class="pre">T_ret</span></code> is known).<br></p>
+<p>In the psychrometric diagram the state of the supply air to the space and the state of the return air from the space also lie on a straight line, the space condition line, of which the slope is determined by the SHR of the room (which is known: <code class="docutils literal notranslate"><span class="pre">SHR</span></code>).</p>
+<p>It then follows that the line of adiabatic mixing and the space condition line must coincide and have the same slope. This fact can now be used to find the complete thermodynamic state of the return air. For this we consider an air conditioning process of which the entering air is the air at the cooler outlet <code class="docutils literal notranslate"><span class="pre">cooler_out_air</span></code>, the slope of its condition line is determined by <code class="docutils literal notranslate"><span class="pre">SHR</span></code>, and the dry-bulb temperature of the leaving air is <code class="docutils literal notranslate"><span class="pre">T_ret</span></code>. With this input data the full state of the return air can be calculated from the equation of the space condition line.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">p1</span> <span class="o">=</span> <span class="n">AirConditioningProcess</span><span class="p">(</span>
+    <span class="n">air_in</span><span class="o">=</span><span class="n">cooler_out_air</span><span class="p">,</span>
+    <span class="n">T_ao</span><span class="o">=</span><span class="n">T_ret</span><span class="p">,</span>
+    <span class="n">SHR</span><span class="o">=</span><span class="n">SHR</span>
+<span class="p">)</span>
+
+<span class="n">return_air</span> <span class="o">=</span> <span class="n">p1</span><span class="o">.</span><span class="n">air_out</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;wet-bulb temperature of room air = &lt;b&gt;</span><span class="si">{</span><span class="n">return_air</span><span class="o">.</span><span class="n">Twb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;degC&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.1f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>wet-bulb temperature of room air = <b>19.0 °C</b></li></ul></div></div>
+</div>
+<p><strong>State of supply air</strong></p>
+<p>With the state of the return air known, the state of the supply air can now be calculated from the sensible and latent heat balance of the room. The enthalpy of water <code class="docutils literal notranslate"><span class="pre">h_w</span></code> in the latent heat balance will be ignored.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">p2</span> <span class="o">=</span> <span class="n">AirConditioningProcess</span><span class="p">(</span>
+    <span class="n">air_out</span><span class="o">=</span><span class="n">return_air</span><span class="p">,</span>
+    <span class="n">m_da</span><span class="o">=</span><span class="n">m_da_sup</span><span class="p">,</span>
+    <span class="n">Q_sen</span><span class="o">=</span><span class="n">Q_sen</span><span class="p">,</span>
+    <span class="n">Q_lat</span><span class="o">=</span><span class="n">Q_lat</span><span class="p">,</span>
+    <span class="n">h_w</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;J / kg&#39;</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">supply_air</span> <span class="o">=</span> <span class="n">p2</span><span class="o">.</span><span class="n">air_in</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;dry-bulb temperature of supply air = &lt;b&gt;</span><span class="si">{</span><span class="n">supply_air</span><span class="o">.</span><span class="n">Tdb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;degC&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.1f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;relative humidity of supply air = &lt;b&gt;</span><span class="si">{</span><span class="n">supply_air</span><span class="o">.</span><span class="n">RH</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;pct&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>dry-bulb temperature of supply air = <b>14.6 °C</b></li><li>relative humidity of supply air = <b>77 %</b></li></ul></div></div>
+</div>
+<p><strong>Air mass flow rates through the cooling coil and the bypass path</strong></p>
+<p>At the mixing point of the cooling coil outlet and the bypass path, the state of the three air streams and the mass flow rate of only the mixed output stream, i.e. the supply air to the room, are known. With these input data the mass flow rates through the cooling coil and through the bypass path can be calculated.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bypass_stream</span> <span class="o">=</span> <span class="n">AirStream</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">return_air</span><span class="p">)</span>
+<span class="n">cooler_out_stream</span> <span class="o">=</span> <span class="n">AirStream</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">cooler_out_air</span><span class="p">)</span>
+<span class="n">supply_stream</span> <span class="o">=</span> <span class="n">AirStream</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">supply_air</span><span class="p">,</span> <span class="n">m_da</span><span class="o">=</span><span class="n">m_da_sup</span><span class="p">)</span>
+
+<span class="n">mix1</span> <span class="o">=</span> <span class="n">AdiabaticMixing</span><span class="p">(</span>
+    <span class="n">in1</span><span class="o">=</span><span class="n">bypass_stream</span><span class="p">,</span>
+    <span class="n">in2</span><span class="o">=</span><span class="n">cooler_out_stream</span><span class="p">,</span>
+    <span class="n">out</span><span class="o">=</span><span class="n">supply_stream</span>
+<span class="p">)</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;mass flow rate of dry air through bypass = &lt;b&gt;</span><span class="si">{</span><span class="n">bypass_stream</span><span class="o">.</span><span class="n">m_da</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;kg / s&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;mass flow rate of dry air through cooler = &lt;b&gt;</span><span class="si">{</span><span class="n">cooler_out_stream</span><span class="o">.</span><span class="n">m_da</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;kg / s&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>mass flow rate of dry air through bypass = <b>0.514 kg/s</b></li><li>mass flow rate of dry air through cooler = <b>0.686 kg/s</b></li></ul></div></div>
+</div>
+<p><strong>Mass flow rate of recirculated return air upstream of the air cooler</strong></p>
+<p>The mass flow rate of dry air at the cooler outlet is also the mass flow rate of return air that flows towards the cooler inlet. However, part of this air is also exhausted to the outside. From the problem statement it follows that 0.26 kg/s is exhausted to the outside (exhaust rate equals outdoor ventilation intake rate, as dictated by the law of conservation of mass at steady-state).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">m_da_exh</span> <span class="o">=</span> <span class="n">m_da_ven</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The mass flow rate of recirculated return air that flows to the mixing chamber upstream of the cooling coil is then:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">m_da_rec</span> <span class="o">=</span> <span class="n">cooler_out_stream</span><span class="o">.</span><span class="n">m_da</span> <span class="o">-</span> <span class="n">m_da_exh</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Adiabatic mixing of return air and ventilation air at cooler inlet</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">recirculated_stream</span> <span class="o">=</span> <span class="n">AirStream</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">return_air</span><span class="p">,</span> <span class="n">m_da</span><span class="o">=</span><span class="n">m_da_rec</span><span class="p">)</span>
+<span class="n">ventilation_stream</span> <span class="o">=</span> <span class="n">AirStream</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">ven_air</span><span class="p">,</span> <span class="n">m_da</span><span class="o">=</span><span class="n">m_da_ven</span><span class="p">)</span>
+<span class="n">cooler_in_stream</span> <span class="o">=</span> <span class="n">AirStream</span><span class="p">(</span><span class="n">m_da</span><span class="o">=</span><span class="n">cooler_out_stream</span><span class="o">.</span><span class="n">m_da</span><span class="p">)</span>
+
+<span class="n">mix2</span> <span class="o">=</span> <span class="n">AdiabaticMixing</span><span class="p">(</span>
+    <span class="n">in1</span><span class="o">=</span><span class="n">recirculated_stream</span><span class="p">,</span>
+    <span class="n">in2</span><span class="o">=</span><span class="n">ventilation_stream</span><span class="p">,</span>
+    <span class="n">out</span><span class="o">=</span><span class="n">cooler_in_stream</span>
+<span class="p">)</span>
+
+<span class="n">cooler_in_air</span> <span class="o">=</span> <span class="n">mix2</span><span class="o">.</span><span class="n">stream_out</span><span class="o">.</span><span class="n">state</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;temperature of the air entering the cooling coil = &lt;b&gt;</span><span class="si">{</span><span class="n">cooler_in_air</span><span class="o">.</span><span class="n">Tdb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;degC&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.1f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>temperature of the air entering the cooling coil = <b>29.0 °C</b></li></ul></div></div>
+</div>
+<p><strong>Refrigeration capacity of cooling coil</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cooler</span> <span class="o">=</span> <span class="n">AirConditioningProcess</span><span class="p">(</span>
+    <span class="n">air_in</span><span class="o">=</span><span class="n">cooler_in_air</span><span class="p">,</span>
+    <span class="n">air_out</span><span class="o">=</span><span class="n">cooler_out_air</span><span class="p">,</span>
+    <span class="n">m_da</span><span class="o">=</span><span class="n">cooler_out_stream</span><span class="o">.</span><span class="n">m_da</span><span class="p">,</span>
+    <span class="n">h_w</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;J / kg&#39;</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;refrigeration capacity of cooling coil = &lt;b&gt;</span><span class="si">{</span><span class="n">cooler</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;kW&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>refrigeration capacity of cooling coil = <b>-28.993 kW</b></li></ul></div></div>
+</div>
+<p><strong>Checking the overall energy balance of the system</strong></p>
+<ul class="simple">
+<li><p>Sensible and latent heat gains are added to the system in the room.</p></li>
+<li><p>Heat is added to the system by the outdoor ventilation air. This air must be cooled to room air conditions = ventilation load.</p></li>
+<li><p>Heat is extracted from the system in the cooling coil.</p></li>
+</ul>
+<p>At steady-state the total heat added to the system must equal the total heat extracted from the system.</p>
+<p>The ventilation load can be determined as follows:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">h_i</span> <span class="o">=</span> <span class="n">ventilation_stream</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">h</span>
+<span class="n">h_f</span> <span class="o">=</span> <span class="n">return_air</span><span class="o">.</span><span class="n">h</span>
+<span class="n">Q_ven</span> <span class="o">=</span> <span class="n">m_da_ven</span> <span class="o">*</span> <span class="p">(</span><span class="n">h_i</span> <span class="o">-</span> <span class="n">h_f</span><span class="p">)</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;ventilation load = &lt;b&gt;</span><span class="si">{</span><span class="n">Q_ven</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;kW&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>ventilation load = <b>6.074 kW</b></li></ul></div></div>
+</div>
+<p>The total heat gain of the system can be determined as:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Q_gain</span> <span class="o">=</span> <span class="n">Q_sen</span> <span class="o">+</span> <span class="n">Q_lat</span> <span class="o">+</span> <span class="n">Q_ven</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;total heat gain of the system = &lt;b&gt;</span><span class="si">{</span><span class="n">Q_gain</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;kW&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>total heat gain of the system = <b>29.074 kW</b></li></ul></div></div>
+</div>
+<p>It follows that the calculated refrigeration capacity of the cooling coil approximates the total heat gain of the system closely.</p>
+</section>
+<section id="space-heating-and-humidification">
+<h2>6. Space Heating and Humidification<a class="headerlink" href="#space-heating-and-humidification" title="Permalink to this headline">#</a></h2>
+<p><em>A winter air conditioning system has a preheat coil, an air washer and a reheat coil as processing units. It supplies air at 38°C db-temperature to a space maintained at 21°C db-temperature and 13°C wb-temperature. The sensible and latent heat loads on the space are 50 kW and 10 kW respectively. Of the return air from the space, 40% by dry air mass is discharged to the ambient and replaced with fresh outdoor air at 2°C db-temperature and 95% relative humidity. In the preheater, the air is heated to a db-temperature of 21°C. Assume that the water added in the air washer is at the wb-temperature of the air entering it. The pressure is constant at 101.3 kPa. Determine (1) mass flow rate of supply air, (2) the rates of heat input in the preheat coil and the reheat coil, (3) the mass flow rate of water in the air washer, and (4) the saturation effectiveness of the air washer.</em></p>
+<p><img alt="scheme" src="_images/heating_and_humidification.png" /></p>
+<p><strong>Space</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">space_air</span> <span class="o">=</span> <span class="n">HumidAir</span><span class="p">(</span><span class="n">Tdb</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">21</span><span class="p">,</span> <span class="s1">&#39;degC&#39;</span><span class="p">),</span> <span class="n">Twb</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="s1">&#39;degC&#39;</span><span class="p">))</span>
+
+<span class="n">Q_sen</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="o">-</span><span class="mi">50</span><span class="p">,</span> <span class="s1">&#39;kW&#39;</span><span class="p">)</span>
+<span class="n">Q_lat</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;kW&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Select a supply air temperature</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">T_supply</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="mi">38</span><span class="p">,</span> <span class="s1">&#39;degC&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Calculate required mass flow rate of supply air and find required state of supply air to meet space loads</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">space</span> <span class="o">=</span> <span class="n">AirConditioningProcess</span><span class="p">(</span>
+    <span class="n">T_ai</span><span class="o">=</span><span class="n">T_supply</span><span class="p">,</span>
+    <span class="n">air_out</span><span class="o">=</span><span class="n">space_air</span><span class="p">,</span>
+    <span class="n">Q_sen</span><span class="o">=</span><span class="n">Q_sen</span><span class="p">,</span>
+    <span class="n">Q_lat</span><span class="o">=</span><span class="n">Q_lat</span>
+<span class="p">)</span>
+<span class="n">m_supply</span> <span class="o">=</span> <span class="n">space</span><span class="o">.</span><span class="n">m_da</span>
+<span class="n">supply_air</span> <span class="o">=</span> <span class="n">space</span><span class="o">.</span><span class="n">air_in</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;mass flow rate of supply air: </span><span class="si">{</span><span class="n">m_supply</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;kg / s&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;supply air: </span><span class="si">{</span><span class="n">supply_air</span><span class="o">.</span><span class="n">Tdb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;degC&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.1f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">supply_air</span><span class="o">.</span><span class="n">W</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;g / kg&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>mass flow rate of supply air: 2.884 kg/s</li><li>supply air: 38.0 °C, 7 g/kg</li></ul></div></div>
+</div>
+<p><strong>Adiabatic mixing of return air with outdoor air</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">return_air</span> <span class="o">=</span> <span class="n">space_air</span>
+<span class="n">outdoor_air</span> <span class="o">=</span> <span class="n">HumidAir</span><span class="p">(</span><span class="n">Tdb</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;degC&#39;</span><span class="p">),</span> <span class="n">RH</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="s1">&#39;pct&#39;</span><span class="p">))</span>
+
+<span class="n">ra_stream</span> <span class="o">=</span> <span class="n">AirStream</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">return_air</span><span class="p">,</span> <span class="n">m_da</span><span class="o">=</span><span class="mf">0.6</span> <span class="o">*</span> <span class="n">m_supply</span><span class="p">)</span>
+<span class="n">oa_stream</span> <span class="o">=</span> <span class="n">AirStream</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">outdoor_air</span><span class="p">,</span> <span class="n">m_da</span><span class="o">=</span><span class="mf">0.4</span> <span class="o">*</span> <span class="n">m_supply</span><span class="p">)</span>
+<span class="n">sa_stream</span> <span class="o">=</span> <span class="n">AirStream</span><span class="p">(</span><span class="n">m_da</span><span class="o">=</span><span class="n">m_supply</span><span class="p">)</span>
+
+<span class="n">mixing_chamber</span> <span class="o">=</span> <span class="n">AdiabaticMixing</span><span class="p">(</span>
+    <span class="n">in1</span><span class="o">=</span><span class="n">ra_stream</span><span class="p">,</span>
+    <span class="n">in2</span><span class="o">=</span><span class="n">oa_stream</span><span class="p">,</span>
+    <span class="n">out</span><span class="o">=</span><span class="n">sa_stream</span>
+<span class="p">)</span>
+
+<span class="n">mixed_air</span> <span class="o">=</span> <span class="n">mixing_chamber</span><span class="o">.</span><span class="n">stream_out</span><span class="o">.</span><span class="n">state</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;mixed air: </span><span class="si">{</span><span class="n">mixed_air</span><span class="o">.</span><span class="n">Tdb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;degC&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.1f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">mixed_air</span><span class="o">.</span><span class="n">W</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;g / kg&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>mixed air: 13.4 °C, 5 g/kg</li></ul></div></div>
+</div>
+<p><strong>Preheater: heat the mixed air to space temperature</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">preheater</span> <span class="o">=</span> <span class="n">AirConditioningProcess</span><span class="p">(</span>
+    <span class="n">air_in</span><span class="o">=</span><span class="n">mixed_air</span><span class="p">,</span>
+    <span class="n">air_out</span><span class="o">=</span><span class="n">HumidAir</span><span class="p">(</span><span class="n">Tdb</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">21</span><span class="p">,</span> <span class="s1">&#39;degC&#39;</span><span class="p">),</span> <span class="n">W</span><span class="o">=</span><span class="n">mixed_air</span><span class="o">.</span><span class="n">W</span><span class="p">),</span>
+    <span class="n">m_da</span><span class="o">=</span><span class="n">m_supply</span>
+<span class="p">)</span>
+
+<span class="n">preheated_air</span> <span class="o">=</span> <span class="n">preheater</span><span class="o">.</span><span class="n">air_out</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;preheater load: </span><span class="si">{</span><span class="n">preheater</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;kW&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;preheated air: </span><span class="si">{</span><span class="n">preheated_air</span><span class="o">.</span><span class="n">Tdb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;degC&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.1f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">preheated_air</span><span class="o">.</span><span class="n">W</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;g / kg&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>preheater load: 22.353 kW</li><li>preheated air: 21.0 °C, 5 g/kg</li></ul></div></div>
+</div>
+<p><strong>Air washer: increase the humidity ratio to the desired level of the supply air</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Water</span> <span class="o">=</span> <span class="n">Fluid</span><span class="p">(</span><span class="s1">&#39;Water&#39;</span><span class="p">)</span>
+<span class="n">make_up_water</span> <span class="o">=</span> <span class="n">Water</span><span class="p">(</span><span class="n">T</span><span class="o">=</span><span class="n">preheated_air</span><span class="o">.</span><span class="n">Twb</span><span class="p">,</span> <span class="n">P</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">101.3</span><span class="p">,</span> <span class="s1">&#39;kPa&#39;</span><span class="p">))</span>
+
+<span class="n">air_washer</span> <span class="o">=</span> <span class="n">AirConditioningProcess</span><span class="p">(</span>
+    <span class="n">air_in</span><span class="o">=</span><span class="n">preheated_air</span><span class="p">,</span>
+    <span class="n">W_ao</span><span class="o">=</span><span class="n">supply_air</span><span class="o">.</span><span class="n">W</span><span class="p">,</span>
+    <span class="n">m_da</span><span class="o">=</span><span class="n">m_supply</span><span class="p">,</span>
+    <span class="n">Q</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">),</span>
+    <span class="n">h_w</span><span class="o">=</span><span class="n">make_up_water</span><span class="o">.</span><span class="n">h</span>
+<span class="p">)</span>
+
+<span class="n">humidified_air</span> <span class="o">=</span> <span class="n">air_washer</span><span class="o">.</span><span class="n">air_out</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;mass flow rate of water in air washer: </span><span class="si">{</span><span class="n">air_washer</span><span class="o">.</span><span class="n">m_w</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;kg / s&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;saturation effectiveness of air washer: </span><span class="si">{</span><span class="n">air_washer</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;pct&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;humidified air: </span><span class="si">{</span><span class="n">humidified_air</span><span class="o">.</span><span class="n">Tdb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;degC&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.1f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">humidified_air</span><span class="o">.</span><span class="n">W</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;g / kg&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>mass flow rate of water in air washer: 0.006 kg/s</li><li>saturation effectiveness of air washer: 59 %</li><li>humidified air: 15.8 °C, 7 g/kg</li></ul></div></div>
+</div>
+<p><strong>Reheater: heats the air to the required supply air temperature</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reheater</span> <span class="o">=</span> <span class="n">AirConditioningProcess</span><span class="p">(</span>
+    <span class="n">air_in</span><span class="o">=</span><span class="n">air_washer</span><span class="o">.</span><span class="n">air_out</span><span class="p">,</span>
+    <span class="n">air_out</span><span class="o">=</span><span class="n">supply_air</span><span class="p">,</span>
+    <span class="n">m_da</span><span class="o">=</span><span class="n">m_supply</span>
+<span class="p">)</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;reheater load: </span><span class="si">{</span><span class="n">reheater</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;kW&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;supply air: </span><span class="si">{</span><span class="n">supply_air</span><span class="o">.</span><span class="n">Tdb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;degC&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.1f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">supply_air</span><span class="o">.</span><span class="n">W</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;g / kg&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>reheater load: 65.323 kW</li><li>supply air: 38.0 °C, 7 g/kg</li></ul></div></div>
+</div>
+<p><strong>Psychrometric chart</strong></p>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">psych_chart</span> <span class="o">=</span> <span class="n">PsychrometricChart</span><span class="p">(</span><span class="n">fig_size</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">psych_chart</span><span class="o">.</span><span class="n">plot_process</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;mixing chamber&#39;</span><span class="p">,</span>
+    <span class="n">start_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">return_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">return_air</span><span class="o">.</span><span class="n">W</span><span class="p">),</span>
+    <span class="n">end_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">outdoor_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">outdoor_air</span><span class="o">.</span><span class="n">W</span><span class="p">),</span>
+    <span class="n">mix_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">mixed_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">mixed_air</span><span class="o">.</span><span class="n">W</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">psych_chart</span><span class="o">.</span><span class="n">plot_process</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;preheater&#39;</span><span class="p">,</span>
+    <span class="n">start_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">mixed_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">mixed_air</span><span class="o">.</span><span class="n">W</span><span class="p">),</span>
+    <span class="n">end_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">preheated_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">preheated_air</span><span class="o">.</span><span class="n">W</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">psych_chart</span><span class="o">.</span><span class="n">plot_process</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;air washer&#39;</span><span class="p">,</span>
+    <span class="n">start_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">preheated_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">preheated_air</span><span class="o">.</span><span class="n">W</span><span class="p">),</span>
+    <span class="n">end_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">humidified_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">humidified_air</span><span class="o">.</span><span class="n">W</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">psych_chart</span><span class="o">.</span><span class="n">plot_process</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;reheater&#39;</span><span class="p">,</span>
+    <span class="n">start_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">humidified_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">humidified_air</span><span class="o">.</span><span class="n">W</span><span class="p">),</span>
+    <span class="n">end_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">supply_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">supply_air</span><span class="o">.</span><span class="n">W</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">psych_chart</span><span class="o">.</span><span class="n">plot_process</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;space&#39;</span><span class="p">,</span>
+    <span class="n">start_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">supply_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">supply_air</span><span class="o">.</span><span class="n">W</span><span class="p">),</span>
+    <span class="n">end_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">return_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">return_air</span><span class="o">.</span><span class="n">W</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">psych_chart</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/airco_proc_02_134_0.png" src="_images/airco_proc_02_134_0.png" />
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="airco_proc_01.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Basic Air Conditioning Processes</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="cav_design.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Design of a Single-Zone CAV System</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Tom Christiaens<br/>
+  
+      &copy; Copyright 2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>
