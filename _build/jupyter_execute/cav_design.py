@@ -204,7 +204,7 @@ cooling_coil = AirConditioningProcess(
 )
 
 ja.display_list([
-    f"cooling coil load: <b>{cooling_coil.Q.to('Btu / hr'):~P.0f}<b>"
+    f"cooling coil load: <b>{cooling_coil.Q.to('Btu / hr'):~P.0f}</b>"
 ])
 
 
@@ -380,7 +380,7 @@ cooling_coil = AirConditioningProcess(
 )
 
 ja.display_list([
-    f"cooling coil load: <b>{cooling_coil.Q.to('Btu / hr'):~P.0f}<b>"
+    f"cooling coil load: <b>{cooling_coil.Q.to('Btu / hr'):~P.0f}</b>"
 ])
 
 
