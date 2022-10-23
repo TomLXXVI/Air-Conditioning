@@ -1,0 +1,1330 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Design of a Multi-Zone VAV System (the Long Way) &#8212; Air Conditioning Calculations with Python</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Design of a Multi-Zone VAV System (the Shorter Way)" href="vav_multizone_design_p2.html" />
+    <link rel="prev" title="Comparison between a CAV and VAV System under Summer Part-Load Operation" href="cav_vav_part_load.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="_static/logo.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Air Conditioning Calculations with Python</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    Air Conditioning Calculations with Python
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="airco_proc_01.html">
+   Basic Air Conditioning Processes
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="airco_proc_02.html">
+   Combining Air Conditioning Processes
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="cav_design.html">
+   Design of a Single-Zone CAV System
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="cav_vav_part_load.html">
+   Comparison between a CAV and VAV System under Summer Part-Load Operation
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Design of a Multi-Zone VAV System (the Long Way)
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="vav_multizone_design_p2.html">
+   Design of a Multi-Zone VAV System (the Shorter Way)
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="vav_multizone_analysis.html">
+   Analysis of a Multi-Zone VAV System at Part-Load
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/TomLXXVI/Air-Conditioning/master?urlpath=tree/vav_multizone_design_p1.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/TomLXXVI/Air-Conditioning"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="headerbtn__text-container">repository</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/TomLXXVI/Air-Conditioning/issues/new?title=Issue%20on%20page%20%2Fvav_multizone_design_p1.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="_sources/vav_multizone_design_p1.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#design-data">
+   0. Design Data
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#cooling-design-day">
+   COOLING DESIGN DAY
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#mass-flow-rate-of-ventilation-air">
+   1. Mass Flow Rate of Ventilation Air
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#zone-supply-air-flow-rates">
+   2. Zone Supply Air Flow Rates
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#supply-fan-power-fan-heating-and-air-condition-at-cooling-coil-exit">
+   3. Supply Fan Power, Fan Heating and Air Condition at Cooling Coil Exit
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#return-air-condition">
+   4. Return Air Condition
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#air-condition-at-cooling-coil-entrance">
+   5. Air Condition at Cooling Coil Entrance
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#cooling-coil-load">
+   6. Cooling Coil Load
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#heating-design-day">
+   HEATING DESIGN DAY
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id1">
+   1. Mass Flow Rate of Ventilation Air
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#preheat-coil-peak-load">
+   2. Preheat Coil Peak Load
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#zone-supply-air-flow-rates-and-supply-air-temperatures">
+   3. Zone Supply Air Flow Rates and Supply Air Temperatures
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id2">
+   4. Return Air Condition
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#adiabatic-mixing-of-return-air-and-outdoor-ventilation-air">
+   5. Adiabatic Mixing of Return Air and Outdoor Ventilation Air
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#fan-heating-and-air-condition-at-cooling-coil-exit">
+   6. Fan Heating and Air Condition at Cooling Coil Exit
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id3">
+   7. Cooling Coil Load
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#reheat-coil-loads">
+   8. Reheat Coil Loads
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Design of a Multi-Zone VAV System (the Long Way)</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#design-data">
+   0. Design Data
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#cooling-design-day">
+   COOLING DESIGN DAY
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#mass-flow-rate-of-ventilation-air">
+   1. Mass Flow Rate of Ventilation Air
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#zone-supply-air-flow-rates">
+   2. Zone Supply Air Flow Rates
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#supply-fan-power-fan-heating-and-air-condition-at-cooling-coil-exit">
+   3. Supply Fan Power, Fan Heating and Air Condition at Cooling Coil Exit
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#return-air-condition">
+   4. Return Air Condition
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#air-condition-at-cooling-coil-entrance">
+   5. Air Condition at Cooling Coil Entrance
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#cooling-coil-load">
+   6. Cooling Coil Load
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#heating-design-day">
+   HEATING DESIGN DAY
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id1">
+   1. Mass Flow Rate of Ventilation Air
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#preheat-coil-peak-load">
+   2. Preheat Coil Peak Load
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#zone-supply-air-flow-rates-and-supply-air-temperatures">
+   3. Zone Supply Air Flow Rates and Supply Air Temperatures
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id2">
+   4. Return Air Condition
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#adiabatic-mixing-of-return-air-and-outdoor-ventilation-air">
+   5. Adiabatic Mixing of Return Air and Outdoor Ventilation Air
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#fan-heating-and-air-condition-at-cooling-coil-exit">
+   6. Fan Heating and Air Condition at Cooling Coil Exit
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id3">
+   7. Cooling Coil Load
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#reheat-coil-loads">
+   8. Reheat Coil Loads
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="design-of-a-multi-zone-vav-system-the-long-way">
+<h1>Design of a Multi-Zone VAV System (the Long Way)<a class="headerlink" href="#design-of-a-multi-zone-vav-system-the-long-way" title="Permalink to this headline">#</a></h1>
+<hr class="docutils" />
+<p>In this notebook a multi-zone VAV system is designed with the package <code class="docutils literal notranslate"><span class="pre">hvac.air_conditioning</span></code>. The example is taken from the book <strong>Heating and Cooling of Buildings</strong> by <em>T. Agami Reddy, Jan F. Kreider, Peter S. Curtiss and Ari Rabl</em> (3th Edition, 2017), Chapter 19.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">hvac</span> <span class="kn">import</span> <span class="n">Quantity</span>
+<span class="kn">from</span> <span class="nn">hvac.fluids</span> <span class="kn">import</span> <span class="n">HumidAir</span>
+<span class="kn">from</span> <span class="nn">hvac.air_conditioning</span> <span class="kn">import</span> <span class="n">AirConditioningProcess</span><span class="p">,</span> <span class="n">AdiabaticMixing</span><span class="p">,</span> <span class="n">AirStream</span><span class="p">,</span> <span class="n">Fan</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Q_</span> <span class="o">=</span> <span class="n">Quantity</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="design-data">
+<h2>0. Design Data<a class="headerlink" href="#design-data" title="Permalink to this headline">#</a></h2>
+<p><em>A two-zone building is to be equipped with a VAV system with preheat and reheat under the load conditions noted as follows. Size the supply fan, cooling coil, preheat coil, and reheat coil (or baseboard heating) for this building. Note that these will also apply to a CAV system under peak design conditions.</em></p>
+<p><strong>Space loads</strong></p>
+<div class="my_table">
+    <table>
+        <tr>
+            <th></th>
+            <th>Zone A (Exterior)</th>
+            <th>Zone B (Interior)</th>
+        </tr>
+        <tr>
+            <td>Sensible peak summer design cooling load</td>
+            <td>224,844 Btu/hr</td>
+            <td>103,308 Btu/hr</td>
+        </tr>
+        <tr>
+            <td>Latent peak summer design cooling load</td>
+            <td>56,000 Btu/hr</td>
+            <td>20,000 Btu/hr</td>
+        </tr>
+        <tr>
+            <td>Sensible peak winter design load</td>
+            <td>-143,000 Btu/hr</td>
+            <td>49,092 Btu/hr</td>
+        </tr>
+        <tr>
+            <td>Zone temperature</td>
+            <td>75°F</td>
+            <td>75°F</td>
+        </tr>
+    </table>
+</div><blockquote>
+<div><p>Notice that interior zone B still requires cooling in winter.</p>
+</div></blockquote>
+<p><strong>Design parameters</strong></p>
+<ol class="simple">
+<li><p>summer design dry-and wet-bulb temperatures: 97°F and 76°F.</p></li>
+<li><p>winter design temperature: 7°F and air assumed to be totally dry.</p></li>
+<li><p>pressure drop in supply system at full air-flow: 3.0 inWG.</p></li>
+<li><p>fan efficiency: 60%.</p></li>
+<li><p>return air fan air temperature rise: none.</p></li>
+<li><p>ventilation airflow rate: 2400 ft<sup>3</sup>/min.</p></li>
+<li><p>relative air humidity at cooling coil outlet: 85%.</p></li>
+<li><p>temperature difference between supply air and zone air: 20°F (to ensure proper mixing).</p></li>
+<li><p>maximum supply air temperature: 105°F (to avoid stratification).</p></li>
+</ol>
+<p><strong>Sketch</strong></p>
+<p><img alt="scheme" src="_images/airco_vav.png" /></p>
+<p><strong>Assumptions</strong></p>
+<ul class="simple">
+<li><p>Ignore factors not included in the list given earlier, such as duct heat losses and gains.</p></li>
+<li><p>The location is assumed to be at sea level.</p></li>
+<li><p>Rather than use enthalpy balances on the zones, the flows will be designed based on sensible heat loads (this is meant to simplify the problem).</p></li>
+<li><p>Peak loads are coincident; no diversity adjustment is used.</p></li>
+<li><p>During peak heating, latent loads on the space are negligible.</p></li>
+<li><p>During winter, room humidifiers are used to maintain the necessary humidity levels.</p></li>
+<li><p>The supply airflow to the zones cannot be reduced to less than 60 % of the full-load design value by mass to ensure proper mixing of the cold supply air once it enters the space.</p></li>
+</ul>
+</section>
+<section id="cooling-design-day">
+<h2>COOLING DESIGN DAY<a class="headerlink" href="#cooling-design-day" title="Permalink to this headline">#</a></h2>
+</section>
+<section id="mass-flow-rate-of-ventilation-air">
+<h2>1. Mass Flow Rate of Ventilation Air<a class="headerlink" href="#mass-flow-rate-of-ventilation-air" title="Permalink to this headline">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">outdoor_air</span> <span class="o">=</span> <span class="n">HumidAir</span><span class="p">(</span><span class="n">Tdb</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">97</span><span class="p">,</span> <span class="s1">&#39;degF&#39;</span><span class="p">),</span> <span class="n">Twb</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">76</span><span class="p">,</span> <span class="s1">&#39;degF&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">V_vent</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="mi">2400</span><span class="p">,</span> <span class="s1">&#39;ft ** 3 / min&#39;</span><span class="p">)</span>
+<span class="n">m_vent</span> <span class="o">=</span> <span class="n">outdoor_air</span><span class="o">.</span><span class="n">rho</span> <span class="o">*</span> <span class="n">V_vent</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;ventilation mass flow rate: &lt;b&gt;</span><span class="si">{</span><span class="n">m_vent</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;lb / hr&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>ventilation mass flow rate: <b>10029 lb/h</b></li></ul></div></div>
+</div>
+</section>
+<section id="zone-supply-air-flow-rates">
+<h2>2. Zone Supply Air Flow Rates<a class="headerlink" href="#zone-supply-air-flow-rates" title="Permalink to this headline">#</a></h2>
+<p>The zone air temperature is 75 °F. To ensure proper mixing with space air the supply air temperature is limited to 20 °F below the zone air temperature. The RH of the air leaving the cooling coil is specified at 85 %. As there is no addition nor extraction of water from the air between the cooling coil and the zones, this is also the RH of the supply air to the zones.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">supply_air</span> <span class="o">=</span> <span class="n">HumidAir</span><span class="p">(</span><span class="n">Tdb</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">75</span> <span class="o">-</span> <span class="mi">20</span><span class="p">,</span> <span class="s1">&#39;degF&#39;</span><span class="p">),</span> <span class="n">RH</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">85</span><span class="p">,</span> <span class="s1">&#39;pct&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Mass flow rate of supply air to zone A</strong></p>
+<p>The required mass flow rate of supply air to zone A is determined to compensate for the sensible heat load of the zone.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">zone_A</span> <span class="o">=</span> <span class="n">AirConditioningProcess</span><span class="p">(</span>
+    <span class="n">air_in</span><span class="o">=</span><span class="n">supply_air</span><span class="p">,</span>
+    <span class="n">T_ao</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">75</span><span class="p">,</span> <span class="s1">&#39;degF&#39;</span><span class="p">),</span>
+    <span class="n">Q_sen</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">224_844</span><span class="p">,</span> <span class="s1">&#39;Btu / hr&#39;</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">m_supply_zA</span> <span class="o">=</span> <span class="n">zone_A</span><span class="o">.</span><span class="n">m_da</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;supply air mass flow rate to zone A: &lt;b&gt;</span><span class="si">{</span><span class="n">m_supply_zA</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;lb / min&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>supply air mass flow rate to zone A: <b>769.099 lb/min</b></li></ul></div></div>
+</div>
+<p><strong>Mass flow rate of supply air to zone B</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">zone_B</span> <span class="o">=</span> <span class="n">AirConditioningProcess</span><span class="p">(</span>
+    <span class="n">air_in</span><span class="o">=</span><span class="n">supply_air</span><span class="p">,</span>
+    <span class="n">T_ao</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">75</span><span class="p">,</span> <span class="s1">&#39;degF&#39;</span><span class="p">),</span>
+    <span class="n">Q_sen</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">103_308</span><span class="p">,</span> <span class="s1">&#39;Btu / hr&#39;</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">m_supply_zB</span> <span class="o">=</span> <span class="n">zone_B</span><span class="o">.</span><span class="n">m_da</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;supply air mass flow rate to zone B: &lt;b&gt;</span><span class="si">{</span><span class="n">m_supply_zB</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;lb / min&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>supply air mass flow rate to zone B: <b>353.374 lb/min</b></li></ul></div></div>
+</div>
+<p><strong>Total mass flow rate of supply air</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">m_supply</span> <span class="o">=</span> <span class="n">m_supply_zA</span> <span class="o">+</span> <span class="n">m_supply_zB</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;total supply air mass flow rate: &lt;b&gt;</span><span class="si">{</span><span class="n">m_supply</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;lb / min&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>total supply air mass flow rate: <b>1122.473 lb/min</b></li></ul></div></div>
+</div>
+</section>
+<section id="supply-fan-power-fan-heating-and-air-condition-at-cooling-coil-exit">
+<h2>3. Supply Fan Power, Fan Heating and Air Condition at Cooling Coil Exit<a class="headerlink" href="#supply-fan-power-fan-heating-and-air-condition-at-cooling-coil-exit" title="Permalink to this headline">#</a></h2>
+<p><strong>Mechanical supply fan power</strong></p>
+<p>The fan pressure is already given (in reality this needs to be calculated after the supply air flow rates to the zones have been determined). The fan efficiency is also given.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dP_fan</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="mf">3.0</span><span class="p">,</span> <span class="s1">&#39;inch_H2O_60F&#39;</span><span class="p">)</span>
+<span class="n">eta_fan</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="s1">&#39;pct&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>To determine the fan power the total volume flow rate of supply air to the zones must first be calculated:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">V_supply</span> <span class="o">=</span> <span class="n">supply_air</span><span class="o">.</span><span class="n">v</span> <span class="o">*</span> <span class="n">m_supply</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Fan power then follows from:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">W_fan</span> <span class="o">=</span> <span class="n">V_supply</span> <span class="o">*</span> <span class="n">dP_fan</span> <span class="o">/</span> <span class="n">eta_fan</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;supply fan power: &lt;b&gt;</span><span class="si">{</span><span class="n">W_fan</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;hp&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>supply fan power: <b>12 hp</b></li></ul></div></div>
+</div>
+<p><strong>Supply air temperature raise due to fan heating</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">supply_fan</span> <span class="o">=</span> <span class="n">Fan</span><span class="p">(</span>
+    <span class="n">air_out</span><span class="o">=</span><span class="n">supply_air</span><span class="p">,</span>
+    <span class="n">fan_efficiency</span><span class="o">=</span><span class="n">eta_fan</span><span class="p">,</span>
+    <span class="n">fan_pressure</span><span class="o">=</span><span class="n">dP_fan</span>
+<span class="p">)</span>
+<span class="n">dT_fan</span> <span class="o">=</span> <span class="n">supply_fan</span><span class="o">.</span><span class="n">air_out</span><span class="o">.</span><span class="n">Tdb</span> <span class="o">-</span> <span class="n">supply_fan</span><span class="o">.</span><span class="n">air_in</span><span class="o">.</span><span class="n">Tdb</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;fan temperature rise: &lt;b&gt;</span><span class="si">{</span><span class="n">dT_fan</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;delta_degF&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>fan temperature rise: <b>2 Δ°F</b></li></ul></div></div>
+</div>
+<p><strong>Air Condition at Cooling Coil Exit</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cooled_air</span> <span class="o">=</span> <span class="n">HumidAir</span><span class="p">(</span><span class="n">Tdb</span><span class="o">=</span><span class="n">supply_air</span><span class="o">.</span><span class="n">Tdb</span> <span class="o">-</span> <span class="n">dT_fan</span><span class="p">,</span> <span class="n">RH</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">85</span><span class="p">,</span> <span class="s1">&#39;pct&#39;</span><span class="p">))</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;cooled air: &lt;b&gt;</span><span class="si">{</span><span class="n">cooled_air</span><span class="o">.</span><span class="n">Tdb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;degF&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2"> TDB, </span><span class="si">{</span><span class="n">cooled_air</span><span class="o">.</span><span class="n">W</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;lb / lb&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.5f</span><span class="si">}</span><span class="s2"> lb&lt;sub&gt;w&lt;/sub&gt;/lb&lt;sub&gt;da&lt;/sub&gt;&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>cooled air: <b>53 °F TDB, 0.00733 lb<sub>w</sub>/lb<sub>da</sub></b></li></ul></div></div>
+</div>
+</section>
+<section id="return-air-condition">
+<h2>4. Return Air Condition<a class="headerlink" href="#return-air-condition" title="Permalink to this headline">#</a></h2>
+<p><strong>Zone A</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">zone_A</span> <span class="o">=</span> <span class="n">AirConditioningProcess</span><span class="p">(</span>
+    <span class="n">air_in</span><span class="o">=</span><span class="n">supply_air</span><span class="p">,</span>
+    <span class="n">T_ao</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">75</span><span class="p">,</span> <span class="s1">&#39;degF&#39;</span><span class="p">),</span>
+    <span class="n">m_da</span><span class="o">=</span><span class="n">m_supply_zA</span><span class="p">,</span>
+    <span class="n">Q_sen</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">224_844</span><span class="p">,</span> <span class="s1">&#39;Btu / hr&#39;</span><span class="p">),</span>
+    <span class="n">Q_lat</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">56_000</span><span class="p">,</span> <span class="s1">&#39;Btu / hr&#39;</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">return_air_zA</span> <span class="o">=</span> <span class="n">zone_A</span><span class="o">.</span><span class="n">air_out</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;return air zone A: &lt;b&gt;</span><span class="si">{</span><span class="n">return_air_zA</span><span class="o">.</span><span class="n">Tdb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;degF&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2"> TDB, </span><span class="si">{</span><span class="n">return_air_zA</span><span class="o">.</span><span class="n">W</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;lb / lb&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.5f</span><span class="si">}</span><span class="s2"> lb&lt;sub&gt;w&lt;/sub&gt;/lb&lt;sub&gt;da&lt;/sub&gt;&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>return air zone A: <b>75 °F TDB, 0.00894 lb<sub>w</sub>/lb<sub>da</sub></b></li></ul></div></div>
+</div>
+<p><strong>Zone B</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">zone_B</span> <span class="o">=</span> <span class="n">AirConditioningProcess</span><span class="p">(</span>
+    <span class="n">air_in</span><span class="o">=</span><span class="n">supply_air</span><span class="p">,</span>
+    <span class="n">T_ao</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">75</span><span class="p">,</span> <span class="s1">&#39;degF&#39;</span><span class="p">),</span>
+    <span class="n">m_da</span><span class="o">=</span><span class="n">m_supply_zB</span><span class="p">,</span>
+    <span class="n">Q_sen</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">103_308</span><span class="p">,</span> <span class="s1">&#39;Btu / hr&#39;</span><span class="p">),</span>
+    <span class="n">Q_lat</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">20_000</span><span class="p">,</span> <span class="s1">&#39;Btu / hr&#39;</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">return_air_zB</span> <span class="o">=</span> <span class="n">zone_B</span><span class="o">.</span><span class="n">air_out</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;return air zone B: &lt;b&gt;</span><span class="si">{</span><span class="n">return_air_zB</span><span class="o">.</span><span class="n">Tdb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;degF&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2"> TDB, </span><span class="si">{</span><span class="n">return_air_zB</span><span class="o">.</span><span class="n">W</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;lb / lb&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.5f</span><span class="si">}</span><span class="s2"> lb&lt;sub&gt;w&lt;/sub&gt;/lb&lt;sub&gt;da&lt;/sub&gt;&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>return air zone B: <b>75 °F TDB, 0.00869 lb<sub>w</sub>/lb<sub>da</sub></b></li></ul></div></div>
+</div>
+<p><strong>Adiabatic mixing of return air from zones</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">return_air_mixing</span> <span class="o">=</span> <span class="n">AdiabaticMixing</span><span class="p">(</span>
+    <span class="n">in1</span><span class="o">=</span><span class="n">AirStream</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">return_air_zA</span><span class="p">,</span> <span class="n">m_da</span><span class="o">=</span><span class="n">m_supply_zA</span><span class="p">),</span>
+    <span class="n">in2</span><span class="o">=</span><span class="n">AirStream</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">return_air_zB</span><span class="p">,</span> <span class="n">m_da</span><span class="o">=</span><span class="n">m_supply_zB</span><span class="p">),</span>
+    <span class="n">out</span><span class="o">=</span><span class="n">AirStream</span><span class="p">(</span><span class="n">m_da</span><span class="o">=</span><span class="n">m_supply</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">return_air</span> <span class="o">=</span> <span class="n">return_air_mixing</span><span class="o">.</span><span class="n">stream_out</span><span class="o">.</span><span class="n">state</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;return air from zones: &lt;b&gt;</span><span class="si">{</span><span class="n">return_air</span><span class="o">.</span><span class="n">Tdb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;degF&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2"> TDB, </span><span class="si">{</span><span class="n">return_air</span><span class="o">.</span><span class="n">W</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;lb / lb&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.5f</span><span class="si">}</span><span class="s2"> lb&lt;sub&gt;w&lt;/sub&gt;/lb&lt;sub&gt;da&lt;/sub&gt;&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>return air from zones: <b>75 °F TDB, 0.00886 lb<sub>w</sub>/lb<sub>da</sub></b></li></ul></div></div>
+</div>
+</section>
+<section id="air-condition-at-cooling-coil-entrance">
+<h2>5. Air Condition at Cooling Coil Entrance<a class="headerlink" href="#air-condition-at-cooling-coil-entrance" title="Permalink to this headline">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mixing_chamber</span> <span class="o">=</span> <span class="n">AdiabaticMixing</span><span class="p">(</span>
+    <span class="n">in1</span><span class="o">=</span><span class="n">AirStream</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">outdoor_air</span><span class="p">,</span> <span class="n">m_da</span><span class="o">=</span><span class="n">m_vent</span><span class="p">),</span>
+    <span class="n">in2</span><span class="o">=</span><span class="n">AirStream</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">return_air</span><span class="p">,</span> <span class="n">m_da</span><span class="o">=</span><span class="n">m_supply</span> <span class="o">-</span> <span class="n">m_vent</span><span class="p">),</span>
+    <span class="n">out</span><span class="o">=</span><span class="n">AirStream</span><span class="p">(</span><span class="n">m_da</span><span class="o">=</span><span class="n">m_supply_zA</span> <span class="o">+</span> <span class="n">m_supply_zB</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">mixed_air</span> <span class="o">=</span> <span class="n">mixing_chamber</span><span class="o">.</span><span class="n">stream_out</span><span class="o">.</span><span class="n">state</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;mixed air: &lt;b&gt;</span><span class="si">{</span><span class="n">mixed_air</span><span class="o">.</span><span class="n">Tdb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;degF&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.1f</span><span class="si">}</span><span class="s2"> TDB, </span><span class="si">{</span><span class="n">mixed_air</span><span class="o">.</span><span class="n">W</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;lb / lb&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.5f</span><span class="si">}</span><span class="s2"> lb&lt;sub&gt;w&lt;/sub&gt;/lb&lt;sub&gt;da&lt;/sub&gt;&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>mixed air: <b>78.3 °F TDB, 0.00971 lb<sub>w</sub>/lb<sub>da</sub></b></li></ul></div></div>
+</div>
+</section>
+<section id="cooling-coil-load">
+<h2>6. Cooling Coil Load<a class="headerlink" href="#cooling-coil-load" title="Permalink to this headline">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cooling_coil</span> <span class="o">=</span> <span class="n">AirConditioningProcess</span><span class="p">(</span>
+    <span class="n">air_in</span><span class="o">=</span><span class="n">mixed_air</span><span class="p">,</span>
+    <span class="n">air_out</span><span class="o">=</span><span class="n">cooled_air</span><span class="p">,</span>
+    <span class="n">m_da</span><span class="o">=</span><span class="n">m_supply</span>
+<span class="p">)</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;cooling coil load: &lt;b&gt;</span><span class="si">{</span><span class="n">cooling_coil</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;Btu / hr&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;cooling coil ADP: &lt;b&gt;</span><span class="si">{</span><span class="n">cooling_coil</span><span class="o">.</span><span class="n">ADP</span><span class="o">.</span><span class="n">Tdb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;degF&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2"> TDB, </span><span class="si">{</span><span class="n">cooling_coil</span><span class="o">.</span><span class="n">ADP</span><span class="o">.</span><span class="n">W</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;lb / lb&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.5f</span><span class="si">}</span><span class="s2"> lb&lt;sub&gt;w&lt;/sub&gt;/lb&lt;sub&gt;da&lt;/sub&gt;&lt;/b&gt;&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;cooling coil contact factor: &lt;b&gt;</span><span class="si">{</span><span class="n">cooling_coil</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;pct&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>cooling coil load: <b>-586874 Btu/h</b></li><li>cooling coil ADP: <b>46 °F TDB, 0.00669 lb<sub>w</sub>/lb<sub>da</sub></b></li><li>cooling coil contact factor: <b>79 %</b></li></ul></div></div>
+</div>
+</section>
+<section id="heating-design-day">
+<h2>HEATING DESIGN DAY<a class="headerlink" href="#heating-design-day" title="Permalink to this headline">#</a></h2>
+</section>
+<section id="id1">
+<h2>1. Mass Flow Rate of Ventilation Air<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">outdoor_air</span> <span class="o">=</span> <span class="n">HumidAir</span><span class="p">(</span><span class="n">Tdb</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="s1">&#39;degF&#39;</span><span class="p">),</span> <span class="n">RH</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;pct&#39;</span><span class="p">))</span>  <span class="c1"># dry air</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">V_vent</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="mi">2400</span><span class="p">,</span> <span class="s1">&#39;ft ** 3 / min&#39;</span><span class="p">)</span>
+<span class="n">m_vent</span> <span class="o">=</span> <span class="n">outdoor_air</span><span class="o">.</span><span class="n">rho</span> <span class="o">*</span> <span class="n">V_vent</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;ventilation mass flow rate: &lt;b&gt;</span><span class="si">{</span><span class="n">m_vent</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;lb / hr&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>ventilation mass flow rate: <b>12250 lb/h</b></li></ul></div></div>
+</div>
+</section>
+<section id="preheat-coil-peak-load">
+<h2>2. Preheat Coil Peak Load<a class="headerlink" href="#preheat-coil-peak-load" title="Permalink to this headline">#</a></h2>
+<p>The peak load on the preheat coil is determined based on the load needed to heat the cold outdoor ventilation air to the nominal coil outlet temperature.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">preheat_coil</span> <span class="o">=</span> <span class="n">AirConditioningProcess</span><span class="p">(</span>
+    <span class="n">air_in</span><span class="o">=</span><span class="n">outdoor_air</span><span class="p">,</span>
+    <span class="n">T_ao</span><span class="o">=</span><span class="n">cooled_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span>
+    <span class="n">m_da</span><span class="o">=</span><span class="n">m_vent</span>
+<span class="p">)</span>
+<span class="n">Q_preheat_peak</span> <span class="o">=</span> <span class="n">preheat_coil</span><span class="o">.</span><span class="n">Q_sen</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;preheat coil peak load: &lt;b&gt;</span><span class="si">{</span><span class="n">Q_preheat_peak</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;Btu/hr&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>preheat coil peak load: <b>137878 Btu/h</b></li></ul></div></div>
+</div>
+</section>
+<section id="zone-supply-air-flow-rates-and-supply-air-temperatures">
+<h2>3. Zone Supply Air Flow Rates and Supply Air Temperatures<a class="headerlink" href="#zone-supply-air-flow-rates-and-supply-air-temperatures" title="Permalink to this headline">#</a></h2>
+<p><strong>Zone A</strong> (requires heating)</p>
+<p>At first take the maximum allowable supply air temperature of 105 °F to determine mass flow rate.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">zone_A</span> <span class="o">=</span> <span class="n">AirConditioningProcess</span><span class="p">(</span>
+    <span class="n">T_ai</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">105</span><span class="p">,</span> <span class="s1">&#39;degF&#39;</span><span class="p">),</span>
+    <span class="n">T_ao</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">75</span><span class="p">,</span> <span class="s1">&#39;degF&#39;</span><span class="p">),</span>
+    <span class="n">Q_sen</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="o">-</span><span class="mi">143_000</span><span class="p">,</span> <span class="s1">&#39;Btu / hr&#39;</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">m_supply_zA_winter</span> <span class="o">=</span> <span class="n">zone_A</span><span class="o">.</span><span class="n">m_da</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;supply air mass flow rate to zone A: &lt;b&gt;</span><span class="si">{</span><span class="n">m_supply_zA_winter</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;lb / min&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>supply air mass flow rate to zone A: <b>326.096 lb/min</b></li></ul></div></div>
+</div>
+<p>Recall the stipulation that the supply air mass flow rate cannot be less than 60 % of the peak air flow to ensure proper mixing with zone air.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">m_supply_zA_winter</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">m_supply_zA_winter</span><span class="p">,</span> <span class="mf">0.6</span> <span class="o">*</span> <span class="n">m_supply_zA</span><span class="p">)</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;supply air mass flow rate to zone A: &lt;b&gt;</span><span class="si">{</span><span class="n">m_supply_zA_winter</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;lb / min&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>supply air mass flow rate to zone A: <b>461.459 lb/min</b></li></ul></div></div>
+</div>
+<p>Supply air temperature:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">zone_A</span> <span class="o">=</span> <span class="n">AirConditioningProcess</span><span class="p">(</span>
+    <span class="n">T_ao</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">75</span><span class="p">,</span> <span class="s1">&#39;degF&#39;</span><span class="p">),</span>
+    <span class="n">m_da</span><span class="o">=</span><span class="n">m_supply_zA_winter</span><span class="p">,</span>
+    <span class="n">Q_sen</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="o">-</span><span class="mi">143_000</span><span class="p">,</span> <span class="s1">&#39;Btu / hr&#39;</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">T_supply_zA</span> <span class="o">=</span> <span class="n">zone_A</span><span class="o">.</span><span class="n">T_ai</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;supply air temperature for zone A: &lt;b&gt;</span><span class="si">{</span><span class="n">T_supply_zA</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;degF&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>supply air temperature for zone A: <b>96.200 °F</b></li></ul></div></div>
+</div>
+<p><strong>Zone B</strong> (requires cooling)</p>
+<p>At first take the minimum supply air temperature (cooling) to determine mass flow rate.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">zone_B</span> <span class="o">=</span> <span class="n">AirConditioningProcess</span><span class="p">(</span>
+    <span class="n">T_ai</span><span class="o">=</span><span class="n">supply_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span>
+    <span class="n">T_ao</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">75</span><span class="p">,</span> <span class="s1">&#39;degF&#39;</span><span class="p">),</span>
+    <span class="n">Q_sen</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">49_092</span><span class="p">,</span> <span class="s1">&#39;Btu / hr&#39;</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">m_supply_zB_winter</span> <span class="o">=</span> <span class="n">zone_B</span><span class="o">.</span><span class="n">m_da</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;supply air mass flow rate to zone B: &lt;b&gt;</span><span class="si">{</span><span class="n">m_supply_zB_winter</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;lb / min&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>supply air mass flow rate to zone B: <b>167.924 lb/min</b></li></ul></div></div>
+</div>
+<p>Next, check again for the condition that mass flow rate cannot be less than 60 % of peak air flow.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">m_supply_zB_winter</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">m_supply_zB_winter</span><span class="p">,</span> <span class="mf">0.6</span> <span class="o">*</span> <span class="n">m_supply_zB</span><span class="p">)</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;supply air mass flow rate to zone B: &lt;b&gt;</span><span class="si">{</span><span class="n">m_supply_zB_winter</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;lb / min&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>supply air mass flow rate to zone B: <b>212.025 lb/min</b></li></ul></div></div>
+</div>
+<p>Supply air temperature:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">zone_B</span> <span class="o">=</span> <span class="n">AirConditioningProcess</span><span class="p">(</span>
+    <span class="n">T_ao</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">75</span><span class="p">,</span> <span class="s1">&#39;degF&#39;</span><span class="p">),</span>
+    <span class="n">m_da</span><span class="o">=</span><span class="n">m_supply_zB_winter</span><span class="p">,</span>
+    <span class="n">Q_sen</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">49_092</span><span class="p">,</span> <span class="s1">&#39;Btu / hr&#39;</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">T_supply_zB</span> <span class="o">=</span> <span class="n">zone_B</span><span class="o">.</span><span class="n">T_ai</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;supply air temperature for zone B: &lt;b&gt;</span><span class="si">{</span><span class="n">T_supply_zB</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;degF&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>supply air temperature for zone B: <b>59.160 °F</b></li></ul></div></div>
+</div>
+<p><strong>Total supply air mass flow rate</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">m_supply</span> <span class="o">=</span> <span class="n">m_supply_zA_winter</span> <span class="o">+</span> <span class="n">m_supply_zB_winter</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;total supply air mass flow rate: &lt;b&gt;</span><span class="si">{</span><span class="n">m_supply</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;lb / min&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>total supply air mass flow rate: <b>673.484 lb/min</b></li></ul></div></div>
+</div>
+<p><strong>Global Supply Air Temperature</strong></p>
+<p>The global supply air temperature must be the smallest required supply air temperature of all zones.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">supply_air</span> <span class="o">=</span> <span class="n">HumidAir</span><span class="p">(</span><span class="n">Tdb</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">T_supply_zA</span><span class="p">,</span> <span class="n">T_supply_zB</span><span class="p">),</span> <span class="n">RH</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;pct&#39;</span><span class="p">))</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;global supply air temperature: &lt;b&gt;</span><span class="si">{</span><span class="n">supply_air</span><span class="o">.</span><span class="n">Tdb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;degF&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>global supply air temperature: <b>59.160 °F</b></li></ul></div></div>
+</div>
+</section>
+<section id="id2">
+<h2>4. Return Air Condition<a class="headerlink" href="#id2" title="Permalink to this headline">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">return_air_mixing</span> <span class="o">=</span> <span class="n">AdiabaticMixing</span><span class="p">(</span>
+    <span class="n">in1</span><span class="o">=</span><span class="n">AirStream</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">HumidAir</span><span class="p">(</span><span class="n">Tdb</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">75</span><span class="p">,</span> <span class="s1">&#39;degF&#39;</span><span class="p">),</span> <span class="n">RH</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;pct&#39;</span><span class="p">)),</span> <span class="n">m_da</span><span class="o">=</span><span class="n">m_supply_zA_winter</span><span class="p">),</span>
+    <span class="n">in2</span><span class="o">=</span><span class="n">AirStream</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">HumidAir</span><span class="p">(</span><span class="n">Tdb</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">75</span><span class="p">,</span> <span class="s1">&#39;degF&#39;</span><span class="p">),</span> <span class="n">RH</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;pct&#39;</span><span class="p">)),</span> <span class="n">m_da</span><span class="o">=</span><span class="n">m_supply_zB_winter</span><span class="p">),</span>
+    <span class="n">out</span><span class="o">=</span><span class="n">AirStream</span><span class="p">(</span><span class="n">m_da</span><span class="o">=</span><span class="n">m_supply</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">return_air</span> <span class="o">=</span> <span class="n">return_air_mixing</span><span class="o">.</span><span class="n">stream_out</span><span class="o">.</span><span class="n">state</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;return air temperature: &lt;b&gt;</span><span class="si">{</span><span class="n">return_air</span><span class="o">.</span><span class="n">Tdb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;degF&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>return air temperature: <b>75.000 °F</b></li></ul></div></div>
+</div>
+</section>
+<section id="adiabatic-mixing-of-return-air-and-outdoor-ventilation-air">
+<h2>5. Adiabatic Mixing of Return Air and Outdoor Ventilation Air<a class="headerlink" href="#adiabatic-mixing-of-return-air-and-outdoor-ventilation-air" title="Permalink to this headline">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mixing_chamber</span> <span class="o">=</span> <span class="n">AdiabaticMixing</span><span class="p">(</span>
+    <span class="n">in1</span><span class="o">=</span><span class="n">AirStream</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">outdoor_air</span><span class="p">,</span> <span class="n">m_da</span><span class="o">=</span><span class="n">m_vent</span><span class="p">),</span>
+    <span class="n">in2</span><span class="o">=</span><span class="n">AirStream</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">return_air</span><span class="p">,</span> <span class="n">m_da</span><span class="o">=</span><span class="n">m_supply</span> <span class="o">-</span> <span class="n">m_vent</span><span class="p">),</span>
+    <span class="n">out</span><span class="o">=</span><span class="n">AirStream</span><span class="p">(</span><span class="n">m_da</span><span class="o">=</span><span class="n">m_supply</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">mixed_air</span> <span class="o">=</span> <span class="n">mixing_chamber</span><span class="o">.</span><span class="n">stream_out</span><span class="o">.</span><span class="n">state</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;mixed air temperature: &lt;b&gt;</span><span class="si">{</span><span class="n">mixed_air</span><span class="o">.</span><span class="n">Tdb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;degF&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>mixed air temperature: <b>54.392 °F</b></li></ul></div></div>
+</div>
+</section>
+<section id="fan-heating-and-air-condition-at-cooling-coil-exit">
+<h2>6. Fan Heating and Air Condition at Cooling Coil Exit<a class="headerlink" href="#fan-heating-and-air-condition-at-cooling-coil-exit" title="Permalink to this headline">#</a></h2>
+<p><strong>Supply air temperature raise due to fan heating</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">supply_fan</span> <span class="o">=</span> <span class="n">Fan</span><span class="p">(</span>
+    <span class="n">air_out</span><span class="o">=</span><span class="n">supply_air</span><span class="p">,</span>
+    <span class="n">fan_efficiency</span><span class="o">=</span><span class="n">eta_fan</span><span class="p">,</span>
+    <span class="n">fan_pressure</span><span class="o">=</span><span class="n">dP_fan</span>
+<span class="p">)</span>
+<span class="n">dT_fan</span> <span class="o">=</span> <span class="n">supply_air</span><span class="o">.</span><span class="n">Tdb</span> <span class="o">-</span> <span class="n">supply_fan</span><span class="o">.</span><span class="n">air_in</span><span class="o">.</span><span class="n">Tdb</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;fan temperature rise: &lt;b&gt;</span><span class="si">{</span><span class="n">dT_fan</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;delta_degF&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>fan temperature rise: <b>2 Δ°F</b></li></ul></div></div>
+</div>
+<p><strong>Air Condition at Cooling Coil Exit</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cooled_air</span> <span class="o">=</span> <span class="n">HumidAir</span><span class="p">(</span><span class="n">Tdb</span><span class="o">=</span><span class="n">supply_air</span><span class="o">.</span><span class="n">Tdb</span> <span class="o">-</span> <span class="n">dT_fan</span><span class="p">,</span> <span class="n">RH</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;pct&#39;</span><span class="p">))</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;temperature cooled air: &lt;b&gt;</span><span class="si">{</span><span class="n">cooled_air</span><span class="o">.</span><span class="n">Tdb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;degF&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.1f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>temperature cooled air: <b>57.3 °F</b></li></ul></div></div>
+</div>
+<p><strong>Check if Preheating the Mixed Air is necessary on Heating Design Day</strong></p>
+<p>Notice that the cooled air temperature is higher than the mixed air temperature. The mixed air is therefore preheated to the cooled air temperature.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">preheat_coil</span> <span class="o">=</span> <span class="n">AirConditioningProcess</span><span class="p">(</span>
+    <span class="n">air_in</span><span class="o">=</span><span class="n">mixed_air</span><span class="p">,</span>
+    <span class="n">air_out</span><span class="o">=</span><span class="n">cooled_air</span><span class="p">,</span>
+    <span class="n">m_da</span><span class="o">=</span><span class="n">m_supply</span>
+<span class="p">)</span>
+<span class="n">preheated_air</span> <span class="o">=</span> <span class="n">cooled_air</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;preheat coil load at design conditions: </span><span class="si">{</span><span class="n">preheat_coil</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;Btu / hr&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>preheat coil load at design conditions: 29050 Btu/h</li></ul></div></div>
+</div>
+</section>
+<section id="id3">
+<h2>7. Cooling Coil Load<a class="headerlink" href="#id3" title="Permalink to this headline">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cooling_coil</span> <span class="o">=</span> <span class="n">AirConditioningProcess</span><span class="p">(</span>
+    <span class="n">T_ai</span><span class="o">=</span><span class="n">preheated_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span>
+    <span class="n">T_ao</span><span class="o">=</span><span class="n">cooled_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span>
+    <span class="n">m_da</span><span class="o">=</span><span class="n">m_supply</span>
+<span class="p">)</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;cooling coil load: &lt;b&gt;</span><span class="si">{</span><span class="n">cooling_coil</span><span class="o">.</span><span class="n">Q_sen</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;Btu / hr&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>cooling coil load: <b>0 Btu/h</b></li></ul></div></div>
+</div>
+</section>
+<section id="reheat-coil-loads">
+<h2>8. Reheat Coil Loads<a class="headerlink" href="#reheat-coil-loads" title="Permalink to this headline">#</a></h2>
+<p><strong>Zone A</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reheat_coil_zA</span> <span class="o">=</span> <span class="n">AirConditioningProcess</span><span class="p">(</span>
+    <span class="n">T_ai</span><span class="o">=</span><span class="n">supply_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span>
+    <span class="n">T_ao</span><span class="o">=</span><span class="n">T_supply_zA</span><span class="p">,</span>
+    <span class="n">m_da</span><span class="o">=</span><span class="n">m_supply_zA_winter</span>
+<span class="p">)</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;reheat coil load: &lt;b&gt;</span><span class="si">{</span><span class="n">reheat_coil_zA</span><span class="o">.</span><span class="n">Q_sen</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;Btu / hr&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>reheat coil load: <b>249846 Btu/h</b></li></ul></div></div>
+</div>
+<p><strong>Zone B</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reheat_coil_zB</span> <span class="o">=</span> <span class="n">AirConditioningProcess</span><span class="p">(</span>
+    <span class="n">T_ai</span><span class="o">=</span><span class="n">supply_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span>
+    <span class="n">T_ao</span><span class="o">=</span><span class="n">T_supply_zB</span><span class="p">,</span>
+    <span class="n">m_da</span><span class="o">=</span><span class="n">m_supply_zB_winter</span>
+<span class="p">)</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;reheat coil load: &lt;b&gt;</span><span class="si">{</span><span class="n">reheat_coil_zB</span><span class="o">.</span><span class="n">Q_sen</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;Btu / hr&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>reheat coil load: <b>0 Btu/h</b></li></ul></div></div>
+</div>
+<p><strong>Total peak heat requirement</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Q_heat_tot</span> <span class="o">=</span> <span class="n">reheat_coil_zA</span><span class="o">.</span><span class="n">Q_sen</span> <span class="o">+</span> <span class="n">reheat_coil_zB</span><span class="o">.</span><span class="n">Q_sen</span> <span class="o">+</span> <span class="n">Q_preheat_peak</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;peak heat requirement: &lt;b&gt;</span><span class="si">{</span><span class="n">Q_heat_tot</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;Btu / hr&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>peak heat requirement: <b>387724 Btu/h</b></li></ul></div></div>
+</div>
+<p>This heat rate must be increased by pickup loads from night setback, safety factors, and piping losses to size the coils and the boiler.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="cav_vav_part_load.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Comparison between a CAV and VAV System under Summer Part-Load Operation</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="vav_multizone_design_p2.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Design of a Multi-Zone VAV System (the Shorter Way)</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Tom Christiaens<br/>
+  
+      &copy; Copyright 2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>
