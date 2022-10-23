@@ -647,6 +647,8 @@ outdoor_air_state = HumidAir(Tdb=Q_(34.0, 'degC'), RH=Q_(60.0, 'pct'))
 # - return air = 1.0 - 0.3 = 0.7 kg/s
 # - supply air = 1.0 kg/s
 
+# **Adiabatic mixing**
+
 # The adiabatic mixing of two air streams is modeled by the `AdiabaticMixing` class. Air streams are modeled by the `AirStream` class. An `AirStream` instance combines the air state and the mass flow rate of an air stream.
 
 # In[50]:
@@ -664,8 +666,6 @@ return_air = AirStream(state=return_air_state, m_da=Q_(0.7, 'kg / s'))
 outdoor_air = AirStream(state=outdoor_air_state, m_da=Q_(0.3, 'kg / s'))
 supply_air = AirStream(m_da=Q_(1.0, 'kg / s'))  # state unknown
 
-
-# **Adiabatic mixing**
 
 # The `AdiabaticMixing` class can handle the adiabatic mixing of two incoming air streams (`in1` and `in2`); in this case the adiabatic mixing of return air and outdoor air in a mixing chamber. The outgoing air stream, which in this case is the supply air, of which only the mass flow rate is known at this moment, is assigned to parameter `out`.
 

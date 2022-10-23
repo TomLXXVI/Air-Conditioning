@@ -18,7 +18,7 @@ import jupyter_addons as ja
 ja.set_css()
 
 
-# In this notebook the design of a single-zone, constant air volume (CAV) air conditioning system with the package `hvac.air_conditioning` is demonstrated. The examples are taken from the book **Heating and Cooling of Buildings** by *T. Agami Reddy, Jan F. Kreider, Peter S. Curtiss and Ari Rabl* (3th Edition, 2017), Chapter 19.
+# In this notebook a single-zone, constant air volume (CAV) air conditioning system is designed with the package `hvac.air_conditioning`. The examples are taken from the book **Heating and Cooling of Buildings** by *T. Agami Reddy, Jan F. Kreider, Peter S. Curtiss and Ari Rabl* (3th Edition, 2017), Chapter 19.
 
 # In[3]:
 
