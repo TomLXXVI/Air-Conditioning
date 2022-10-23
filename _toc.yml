@@ -7,4 +7,8 @@ chapters:
 - file: airco_proc_01
 - file: airco_proc_02
 - file: cav_design
+- file: cav_vav_part_load
+- file: vav_multizone_design_p1
+- file: vav_multizone_design_p2
+- file: vav_multizone_analysis
 
