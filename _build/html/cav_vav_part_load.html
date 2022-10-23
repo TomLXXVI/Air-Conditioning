@@ -1,0 +1,903 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Comparison between a CAV and VAV System under Summer Part-Load Operation &#8212; Air Conditioning Calculations with Python</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Design of a Multi-Zone VAV System (the Long Way)" href="vav_multizone_design_p1.html" />
+    <link rel="prev" title="Design of a Single-Zone CAV System" href="cav_design.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="_static/logo.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Air Conditioning Calculations with Python</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    Air Conditioning Calculations with Python
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="airco_proc_01.html">
+   Basic Air Conditioning Processes
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="airco_proc_02.html">
+   Combining Air Conditioning Processes
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="cav_design.html">
+   Design of a Single-Zone CAV System
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Comparison between a CAV and VAV System under Summer Part-Load Operation
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="vav_multizone_design_p1.html">
+   Design of a Multi-Zone VAV System (the Long Way)
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="vav_multizone_design_p2.html">
+   Design of a Multi-Zone VAV System (the Shorter Way)
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="vav_multizone_analysis.html">
+   Analysis of a Multi-Zone VAV System at Part-Load
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/TomLXXVI/Air-Conditioning/master?urlpath=tree/cav_vav_part_load.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/TomLXXVI/Air-Conditioning"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="headerbtn__text-container">repository</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/TomLXXVI/Air-Conditioning/issues/new?title=Issue%20on%20page%20%2Fcav_vav_part_load.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="_sources/cav_vav_part_load.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#cav-system-at-part-load">
+   CAV System at Part Load
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#known-data">
+     0. Known Data
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#determine-supply-air-condition-and-relative-humidity-of-zone-air">
+     1. Determine Supply Air Condition and Relative Humidity of Zone Air
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#determine-mixed-air-condition-at-cooling-coil-inlet">
+     2. Determine Mixed Air Condition at Cooling Coil Inlet
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#determine-cooling-coil-load">
+     3. Determine Cooling Coil Load
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#determine-reheat-coil-load">
+     4. Determine Reheat Coil Load
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#psychrometric-chart">
+     Psychrometric Chart
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#vav-system-at-part-load">
+   VAV System at part-load
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id1">
+     0. Known data
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#determine-the-supply-air-mass-flow-rate-and-verify-indoor-comfort">
+     1. Determine the Supply Air Mass Flow Rate and Verify Indoor Comfort
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id2">
+     2. Determine Mixed Air Condition at Cooling Coil Inlet
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id3">
+     3. Determine Cooling Coil Load
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id4">
+     Psychrometric Chart
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Comparison between a CAV and VAV System under Summer Part-Load Operation</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#cav-system-at-part-load">
+   CAV System at Part Load
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#known-data">
+     0. Known Data
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#determine-supply-air-condition-and-relative-humidity-of-zone-air">
+     1. Determine Supply Air Condition and Relative Humidity of Zone Air
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#determine-mixed-air-condition-at-cooling-coil-inlet">
+     2. Determine Mixed Air Condition at Cooling Coil Inlet
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#determine-cooling-coil-load">
+     3. Determine Cooling Coil Load
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#determine-reheat-coil-load">
+     4. Determine Reheat Coil Load
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#psychrometric-chart">
+     Psychrometric Chart
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#vav-system-at-part-load">
+   VAV System at part-load
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id1">
+     0. Known data
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#determine-the-supply-air-mass-flow-rate-and-verify-indoor-comfort">
+     1. Determine the Supply Air Mass Flow Rate and Verify Indoor Comfort
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id2">
+     2. Determine Mixed Air Condition at Cooling Coil Inlet
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id3">
+     3. Determine Cooling Coil Load
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id4">
+     Psychrometric Chart
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="comparison-between-a-cav-and-vav-system-under-summer-part-load-operation">
+<h1>Comparison between a CAV and VAV System under Summer Part-Load Operation<a class="headerlink" href="#comparison-between-a-cav-and-vav-system-under-summer-part-load-operation" title="Permalink to this headline">#</a></h1>
+<hr class="docutils" />
+<p>In this notebook a single-zone constant air volume (CAV) and variable air volume (VAV) air conditioning system at part-load operation are analyzed with the package <code class="docutils literal notranslate"><span class="pre">hvac.air_conditioning</span></code>. The example is taken from the book <strong>Heating and Cooling of Buildings</strong> by <em>T. Agami Reddy, Jan F. Kreider, Peter S. Curtiss and Ari Rabl</em> (3th Edition, 2017), Chapter 19.</p>
+<p>Under part-load operation the space thermostat keeps the dry-bulb temperature in the space constant by modulating the supply air temperature. The air humidity of the space will depend on the latent heat load of the space and the kind of AC system (CAV or VAV).</p>
+<section id="cav-system-at-part-load">
+<h2>CAV System at Part Load<a class="headerlink" href="#cav-system-at-part-load" title="Permalink to this headline">#</a></h2>
+<p><em>We consider the same single-zone CAV system that was designed under summer peak-load condition in a previous notebook. This example will serve to illustrate how the CAV system needs to be operated under part-load condition so as to maintain satisfactory indoor space conditions. We will determine the cooling coil loads as well as the reheat energy required in this case. We assume the same zone and cooling coil outlet temperatures and the same amount of ventilation air. The outdoor air conditions are 80°F and 60% RH, while the space cooling load is now 70,000 Btu/h with SHR = 0.7.</em></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">hvac</span> <span class="kn">import</span> <span class="n">Quantity</span>
+<span class="kn">from</span> <span class="nn">hvac.fluids</span> <span class="kn">import</span> <span class="n">HumidAir</span>
+<span class="kn">from</span> <span class="nn">hvac.air_conditioning</span> <span class="kn">import</span> <span class="n">AirConditioningProcess</span><span class="p">,</span> <span class="n">AdiabaticMixing</span><span class="p">,</span> <span class="n">AirStream</span>
+<span class="kn">from</span> <span class="nn">hvac.charts</span> <span class="kn">import</span> <span class="n">PsychrometricChart</span><span class="p">,</span> <span class="n">StatePoint</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Q_</span> <span class="o">=</span> <span class="n">Quantity</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="known-data">
+<h3>0. Known Data<a class="headerlink" href="#known-data" title="Permalink to this headline">#</a></h3>
+<p><strong>Zone</strong></p>
+<p>Zone air db-temperature:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">T_zone</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="mi">78</span><span class="p">,</span> <span class="s1">&#39;degF&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Space load:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Q_zone</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="mi">70_000</span><span class="p">,</span> <span class="s1">&#39;Btu / hr&#39;</span><span class="p">)</span>
+<span class="n">SHR_zone</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="mf">0.7</span><span class="p">,</span> <span class="s1">&#39;frac&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Outdoor air ventilation</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">outdoor_air</span> <span class="o">=</span> <span class="n">HumidAir</span><span class="p">(</span><span class="n">Tdb</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">80</span><span class="p">,</span> <span class="s1">&#39;degF&#39;</span><span class="p">),</span> <span class="n">RH</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="s1">&#39;pct&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">V_vent</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;ft ** 3 / min&#39;</span><span class="p">)</span>
+<span class="n">m_vent</span> <span class="o">=</span> <span class="n">outdoor_air</span><span class="o">.</span><span class="n">rho</span> <span class="o">*</span> <span class="n">V_vent</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Mass flow rate of supply air</strong><br>
+Under part-load condition the space thermostat keeps the db-temperature in the space constant by modulating the supply air temperature, while the supply airflow rate remains fixed (hence the term constant air volume or CAV).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">m_supply</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="mi">17_140</span><span class="p">,</span> <span class="s1">&#39;lb / hr&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Condition of air leaving the cooling coil</strong><br>
+The condition of the air leaving the cooling coil remains unchanged in order to provide the dehumidification necessary for occupant comfort.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cooled_air</span> <span class="o">=</span> <span class="n">HumidAir</span><span class="p">(</span><span class="n">Tdb</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">58</span><span class="p">,</span> <span class="s1">&#39;degF&#39;</span><span class="p">),</span> <span class="n">RH</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">0.8</span><span class="p">,</span> <span class="s1">&#39;frac&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="determine-supply-air-condition-and-relative-humidity-of-zone-air">
+<h3>1. Determine Supply Air Condition and Relative Humidity of Zone Air<a class="headerlink" href="#determine-supply-air-condition-and-relative-humidity-of-zone-air" title="Permalink to this headline">#</a></h3>
+<p><strong>The mass flow rate of supply air is known as it remains fixed in a CAV system.</strong> The required supply air temperature can the determined from the sensible heat load of the zone. As the humidity ratio of the air through the reheat coil remains constant, the supply air to the zone will have the same humidity ratio as the cooled air at the cooling coil outlet. Knowing the required supply air condition to compensate for the sensible heat load of the space, the resulting air humidity in the space follows from the latent heat balance of the space.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">zone</span> <span class="o">=</span> <span class="n">AirConditioningProcess</span><span class="p">(</span>
+    <span class="n">W_ai</span><span class="o">=</span><span class="n">cooled_air</span><span class="o">.</span><span class="n">W</span><span class="p">,</span>
+    <span class="n">T_ao</span><span class="o">=</span><span class="n">T_zone</span><span class="p">,</span>
+    <span class="n">m_da</span><span class="o">=</span><span class="n">m_supply</span><span class="p">,</span>
+    <span class="n">Q</span><span class="o">=</span><span class="n">Q_zone</span><span class="p">,</span>
+    <span class="n">SHR</span><span class="o">=</span><span class="n">SHR_zone</span>
+<span class="p">)</span>
+<span class="n">supply_air</span> <span class="o">=</span> <span class="n">zone</span><span class="o">.</span><span class="n">air_in</span>
+<span class="n">zone_air</span> <span class="o">=</span> <span class="n">zone</span><span class="o">.</span><span class="n">air_out</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;supply air at part-load: &lt;b&gt;</span><span class="si">{</span><span class="n">supply_air</span><span class="o">.</span><span class="n">Tdb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;degF&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.1f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">supply_air</span><span class="o">.</span><span class="n">RH</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;pct&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;zone air at part-load: &lt;b&gt;</span><span class="si">{</span><span class="n">zone_air</span><span class="o">.</span><span class="n">Tdb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;degF&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.1f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">zone_air</span><span class="o">.</span><span class="n">RH</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;pct&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>supply air at part-load: <b>66.3 °F, 60 %</b></li><li>zone air at part-load: <b>78.0 °F, 46 %</b></li></ul></div></div>
+</div>
+</section>
+<section id="determine-mixed-air-condition-at-cooling-coil-inlet">
+<h3>2. Determine Mixed Air Condition at Cooling Coil Inlet<a class="headerlink" href="#determine-mixed-air-condition-at-cooling-coil-inlet" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mixing_chamber</span> <span class="o">=</span> <span class="n">AdiabaticMixing</span><span class="p">(</span>
+    <span class="n">in1</span><span class="o">=</span><span class="n">AirStream</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">outdoor_air</span><span class="p">,</span> <span class="n">m_da</span><span class="o">=</span><span class="n">m_vent</span><span class="p">),</span>
+    <span class="n">in2</span><span class="o">=</span><span class="n">AirStream</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">zone_air</span><span class="p">,</span> <span class="n">m_da</span><span class="o">=</span><span class="n">m_supply</span><span class="o">-</span><span class="n">m_vent</span><span class="p">),</span>
+    <span class="n">out</span><span class="o">=</span><span class="n">AirStream</span><span class="p">(</span><span class="n">m_da</span><span class="o">=</span><span class="n">m_supply</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">mixed_air</span> <span class="o">=</span> <span class="n">mixing_chamber</span><span class="o">.</span><span class="n">stream_out</span><span class="o">.</span><span class="n">state</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;mixed air at part-load: &lt;b&gt;</span><span class="si">{</span><span class="n">mixed_air</span><span class="o">.</span><span class="n">Tdb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;degF&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.1f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">mixed_air</span><span class="o">.</span><span class="n">RH</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;pct&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>mixed air at part-load: <b>78.5 °F, 49 %</b></li></ul></div></div>
+</div>
+</section>
+<section id="determine-cooling-coil-load">
+<h3>3. Determine Cooling Coil Load<a class="headerlink" href="#determine-cooling-coil-load" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cooling_coil</span> <span class="o">=</span> <span class="n">AirConditioningProcess</span><span class="p">(</span>
+    <span class="n">air_in</span><span class="o">=</span><span class="n">mixed_air</span><span class="p">,</span>
+    <span class="n">air_out</span><span class="o">=</span><span class="n">cooled_air</span><span class="p">,</span>
+    <span class="n">m_da</span><span class="o">=</span><span class="n">m_supply</span>
+<span class="p">)</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;cooling coil load at part-load: &lt;b&gt;</span><span class="si">{</span><span class="n">cooling_coil</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;Btu / hr&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>cooling coil load at part-load: <b>-125045 Btu/h</b></li></ul></div></div>
+</div>
+</section>
+<section id="determine-reheat-coil-load">
+<h3>4. Determine Reheat Coil Load<a class="headerlink" href="#determine-reheat-coil-load" title="Permalink to this headline">#</a></h3>
+<p>In a CAV system with fixed supply air mass flow rate and fixed air condition at the cooling coil exit (actually needed in a multizone system), reheating the supply air at the entrance of the zone is necessary to get at the required supply air temperature to meet the sensible heat load of the zone. The simultaneous operation of the cooling coil and reheat coil is called “coil bucking”.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reheat_coil</span> <span class="o">=</span> <span class="n">AirConditioningProcess</span><span class="p">(</span>
+    <span class="n">air_in</span><span class="o">=</span><span class="n">cooled_air</span><span class="p">,</span>
+    <span class="n">air_out</span><span class="o">=</span><span class="n">supply_air</span><span class="p">,</span>
+    <span class="n">m_da</span><span class="o">=</span><span class="n">m_supply</span>
+<span class="p">)</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;reheat coil load at part-load: &lt;b&gt;</span><span class="si">{</span><span class="n">reheat_coil</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;Btu / hr&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>reheat coil load at part-load: <b>34514 Btu/h</b></li></ul></div></div>
+</div>
+</section>
+<section id="psychrometric-chart">
+<h3>Psychrometric Chart<a class="headerlink" href="#psychrometric-chart" title="Permalink to this headline">#</a></h3>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">psych_chart</span> <span class="o">=</span> <span class="n">PsychrometricChart</span><span class="p">(</span><span class="n">fig_size</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">psych_chart</span><span class="o">.</span><span class="n">plot_process</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;mixing_chamber&#39;</span><span class="p">,</span>
+    <span class="n">start_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">outdoor_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">outdoor_air</span><span class="o">.</span><span class="n">W</span><span class="p">),</span>
+    <span class="n">end_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">zone_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">zone_air</span><span class="o">.</span><span class="n">W</span><span class="p">),</span>
+    <span class="n">mix_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">mixed_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">mixed_air</span><span class="o">.</span><span class="n">W</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">psych_chart</span><span class="o">.</span><span class="n">plot_process</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;cooling_coil&#39;</span><span class="p">,</span>
+    <span class="n">start_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">mixed_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">mixed_air</span><span class="o">.</span><span class="n">W</span><span class="p">),</span>
+    <span class="n">end_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">cooled_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">cooled_air</span><span class="o">.</span><span class="n">W</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">psych_chart</span><span class="o">.</span><span class="n">plot_process</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;reheat_coil&#39;</span><span class="p">,</span>
+    <span class="n">start_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">cooled_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">cooled_air</span><span class="o">.</span><span class="n">W</span><span class="p">),</span>
+    <span class="n">end_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">supply_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">supply_air</span><span class="o">.</span><span class="n">W</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">psych_chart</span><span class="o">.</span><span class="n">plot_process</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;zone&#39;</span><span class="p">,</span>
+    <span class="n">start_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">supply_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">supply_air</span><span class="o">.</span><span class="n">W</span><span class="p">),</span>
+    <span class="n">end_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">zone_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">zone_air</span><span class="o">.</span><span class="n">W</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">psych_chart</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/cav_vav_part_load_33_0.png" src="_images/cav_vav_part_load_33_0.png" />
+</div>
+</div>
+</section>
+</section>
+<section id="vav-system-at-part-load">
+<h2>VAV System at part-load<a class="headerlink" href="#vav-system-at-part-load" title="Permalink to this headline">#</a></h2>
+<p><em>Consider the same conditions as for the CAV system above. We will solve the same problem assuming VAV system operation.</em></p>
+<section id="id1">
+<h3>0. Known data<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h3>
+<p>Same as above.</p>
+</section>
+<section id="determine-the-supply-air-mass-flow-rate-and-verify-indoor-comfort">
+<h3>1. Determine the Supply Air Mass Flow Rate and Verify Indoor Comfort<a class="headerlink" href="#determine-the-supply-air-mass-flow-rate-and-verify-indoor-comfort" title="Permalink to this headline">#</a></h3>
+<p><strong>The supply air temperature is equal to the set temperature of the cooling coil, i.e. at the cooling coil exit.</strong> Also the humidity ratio between the cooling coil exit and the supply air entrance to the space remains unchanged. The required supply air mass flow rate can be determined from the sensible heat balance of the space. The humidity of the zone air then follows from the latent heat balance of the space.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">supply_air</span> <span class="o">=</span> <span class="n">cooled_air</span>
+
+<span class="n">zone</span> <span class="o">=</span> <span class="n">AirConditioningProcess</span><span class="p">(</span>
+    <span class="n">air_in</span><span class="o">=</span><span class="n">supply_air</span><span class="p">,</span>
+    <span class="n">T_ao</span><span class="o">=</span><span class="n">T_zone</span><span class="p">,</span>
+    <span class="n">Q</span><span class="o">=</span><span class="n">Q_zone</span><span class="p">,</span>
+    <span class="n">SHR</span><span class="o">=</span><span class="n">SHR_zone</span>
+<span class="p">)</span>
+<span class="n">m_supply</span> <span class="o">=</span> <span class="n">zone</span><span class="o">.</span><span class="n">m_da</span>
+<span class="n">zone_air</span> <span class="o">=</span> <span class="n">zone</span><span class="o">.</span><span class="n">air_out</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;supply air mass flow rate at part-load: &lt;b&gt;</span><span class="si">{</span><span class="n">m_supply</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;lb / hr&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;zone air at part-load: &lt;b&gt;</span><span class="si">{</span><span class="n">zone_air</span><span class="o">.</span><span class="n">Tdb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;degF&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.1f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">zone_air</span><span class="o">.</span><span class="n">RH</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;pct&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>supply air mass flow rate at part-load: <b>10057 lb/h</b></li><li>zone air at part-load: <b>78.0 °F, 49 %</b></li></ul></div></div>
+</div>
+</section>
+<section id="id2">
+<h3>2. Determine Mixed Air Condition at Cooling Coil Inlet<a class="headerlink" href="#id2" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mixing_chamber</span> <span class="o">=</span> <span class="n">AdiabaticMixing</span><span class="p">(</span>
+    <span class="n">in1</span><span class="o">=</span><span class="n">AirStream</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">outdoor_air</span><span class="p">,</span> <span class="n">m_da</span><span class="o">=</span><span class="n">m_vent</span><span class="p">),</span>
+    <span class="n">in2</span><span class="o">=</span><span class="n">AirStream</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">zone_air</span><span class="p">,</span> <span class="n">m_da</span><span class="o">=</span><span class="n">m_supply</span><span class="o">-</span><span class="n">m_vent</span><span class="p">),</span>
+    <span class="n">out</span><span class="o">=</span><span class="n">AirStream</span><span class="p">(</span><span class="n">m_da</span><span class="o">=</span><span class="n">m_supply</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">mixed_air</span> <span class="o">=</span> <span class="n">mixing_chamber</span><span class="o">.</span><span class="n">stream_out</span><span class="o">.</span><span class="n">state</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;mixed air at part-load: &lt;b&gt;</span><span class="si">{</span><span class="n">mixed_air</span><span class="o">.</span><span class="n">Tdb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;degF&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.1f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">mixed_air</span><span class="o">.</span><span class="n">RH</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;pct&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>mixed air at part-load: <b>78.9 °F, 54 %</b></li></ul></div></div>
+</div>
+</section>
+<section id="id3">
+<h3>3. Determine Cooling Coil Load<a class="headerlink" href="#id3" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cooling_coil</span> <span class="o">=</span> <span class="n">AirConditioningProcess</span><span class="p">(</span>
+    <span class="n">air_in</span><span class="o">=</span><span class="n">mixed_air</span><span class="p">,</span>
+    <span class="n">air_out</span><span class="o">=</span><span class="n">cooled_air</span><span class="p">,</span>
+    <span class="n">m_da</span><span class="o">=</span><span class="n">m_supply</span>
+<span class="p">)</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;cooling coil load at part-load: &lt;b&gt;</span><span class="si">{</span><span class="n">cooling_coil</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;Btu / hr&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>cooling coil load at part-load: <b>-86764 Btu/h</b></li></ul></div></div>
+</div>
+</section>
+<section id="id4">
+<h3>Psychrometric Chart<a class="headerlink" href="#id4" title="Permalink to this headline">#</a></h3>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">psych_chart</span> <span class="o">=</span> <span class="n">PsychrometricChart</span><span class="p">(</span><span class="n">fig_size</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">psych_chart</span><span class="o">.</span><span class="n">plot_process</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;mixing_chamber&#39;</span><span class="p">,</span>
+    <span class="n">start_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">outdoor_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">outdoor_air</span><span class="o">.</span><span class="n">W</span><span class="p">),</span>
+    <span class="n">end_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">zone_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">zone_air</span><span class="o">.</span><span class="n">W</span><span class="p">),</span>
+    <span class="n">mix_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">mixed_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">mixed_air</span><span class="o">.</span><span class="n">W</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">psych_chart</span><span class="o">.</span><span class="n">plot_process</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;cooling_coil&#39;</span><span class="p">,</span>
+    <span class="n">start_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">mixed_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">mixed_air</span><span class="o">.</span><span class="n">W</span><span class="p">),</span>
+    <span class="n">end_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">cooled_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">cooled_air</span><span class="o">.</span><span class="n">W</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">psych_chart</span><span class="o">.</span><span class="n">plot_process</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;zone&#39;</span><span class="p">,</span>
+    <span class="n">start_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">supply_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">supply_air</span><span class="o">.</span><span class="n">W</span><span class="p">),</span>
+    <span class="n">end_point</span><span class="o">=</span><span class="n">StatePoint</span><span class="p">(</span><span class="n">zone_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">zone_air</span><span class="o">.</span><span class="n">W</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">psych_chart</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/cav_vav_part_load_46_0.png" src="_images/cav_vav_part_load_46_0.png" />
+</div>
+</div>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="cav_design.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Design of a Single-Zone CAV System</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="vav_multizone_design_p1.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Design of a Multi-Zone VAV System (the Long Way)</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Tom Christiaens<br/>
+  
+      &copy; Copyright 2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

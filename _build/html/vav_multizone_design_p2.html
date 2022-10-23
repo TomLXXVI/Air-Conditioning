@@ -1,0 +1,858 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Design of a Multi-Zone VAV System (the Shorter Way) &#8212; Air Conditioning Calculations with Python</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Analysis of a Multi-Zone VAV System at Part-Load" href="vav_multizone_analysis.html" />
+    <link rel="prev" title="Design of a Multi-Zone VAV System (the Long Way)" href="vav_multizone_design_p1.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="_static/logo.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Air Conditioning Calculations with Python</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    Air Conditioning Calculations with Python
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="airco_proc_01.html">
+   Basic Air Conditioning Processes
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="airco_proc_02.html">
+   Combining Air Conditioning Processes
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="cav_design.html">
+   Design of a Single-Zone CAV System
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="cav_vav_part_load.html">
+   Comparison between a CAV and VAV System under Summer Part-Load Operation
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="vav_multizone_design_p1.html">
+   Design of a Multi-Zone VAV System (the Long Way)
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Design of a Multi-Zone VAV System (the Shorter Way)
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="vav_multizone_analysis.html">
+   Analysis of a Multi-Zone VAV System at Part-Load
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/TomLXXVI/Air-Conditioning/master?urlpath=tree/vav_multizone_design_p2.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/TomLXXVI/Air-Conditioning"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="headerbtn__text-container">repository</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/TomLXXVI/Air-Conditioning/issues/new?title=Issue%20on%20page%20%2Fvav_multizone_design_p2.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="_sources/vav_multizone_design_p2.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#create-zones-with-design-data">
+   Create Zones with Design Data
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#zone-a">
+     Zone A
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#zone-b">
+     Zone B
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#create-vav-system">
+   Create VAV System
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#cooling-design-day">
+   COOLING DESIGN DAY
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#psychrometric-chart">
+     Psychrometric Chart
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#zone-info">
+     Zone Info
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#heating-design-day">
+   HEATING DESIGN DAY
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Design of a Multi-Zone VAV System (the Shorter Way)</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#create-zones-with-design-data">
+   Create Zones with Design Data
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#zone-a">
+     Zone A
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#zone-b">
+     Zone B
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#create-vav-system">
+   Create VAV System
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#cooling-design-day">
+   COOLING DESIGN DAY
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#psychrometric-chart">
+     Psychrometric Chart
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#zone-info">
+     Zone Info
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#heating-design-day">
+   HEATING DESIGN DAY
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="design-of-a-multi-zone-vav-system-the-shorter-way">
+<h1>Design of a Multi-Zone VAV System (the Shorter Way)<a class="headerlink" href="#design-of-a-multi-zone-vav-system-the-shorter-way" title="Permalink to this headline">#</a></h1>
+<hr class="docutils" />
+<p>In this notebook the example from the previous notebook <strong>Design of a Multi-Zone VAV System (the Long Way)</strong> is repeated, but now the <code class="docutils literal notranslate"><span class="pre">VAVSystem</span></code> class will be used, which automates the design procedure of a multi-zone VAV system. This class resides in the module <code class="docutils literal notranslate"><span class="pre">hvac.air_conditioning.vav_system.design</span></code>. This class can be used for a multi-zone VAV system with cooling and/or heating, having a preheat coil, a cooling coil, and reheat coils at the entrance of the zones. For winter conditions the air is assumed to be totally dry (i.e. only sensible loads are considered).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">hvac</span> <span class="kn">import</span> <span class="n">Quantity</span>
+<span class="kn">from</span> <span class="nn">hvac.fluids</span> <span class="kn">import</span> <span class="n">HumidAir</span>
+<span class="kn">from</span> <span class="nn">hvac.air_conditioning.vav_system.design</span> <span class="kn">import</span> <span class="n">Zone</span><span class="p">,</span> <span class="n">Season</span><span class="p">,</span> <span class="n">VAVSystem</span>
+<span class="kn">from</span> <span class="nn">hvac.charts</span> <span class="kn">import</span> <span class="n">PsychrometricChart</span><span class="p">,</span> <span class="n">StatePoint</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Q_</span> <span class="o">=</span> <span class="n">Quantity</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="create-zones-with-design-data">
+<h2>Create Zones with Design Data<a class="headerlink" href="#create-zones-with-design-data" title="Permalink to this headline">#</a></h2>
+<p>The design data of a zone is bundled in a <code class="docutils literal notranslate"><span class="pre">Zone</span></code> data class. First of all, a zone must have a name. The design data concerning the summer peak design day and the design data concerning the winter peak design day are grouped into two separate instances of the <code class="docutils literal notranslate"><span class="pre">Season</span></code> class. The design data are the sensible and latent heat load of the zone and the desired state of the zone air. The <code class="docutils literal notranslate"><span class="pre">Season</span></code> instance with the design data for the summer peak design day is passed through the <code class="docutils literal notranslate"><span class="pre">summer</span></code> parameter of the <code class="docutils literal notranslate"><span class="pre">Zone</span></code> class constructor. The <code class="docutils literal notranslate"><span class="pre">Season</span></code> instance with the design data of the winter peak design day is passed through the <code class="docutils literal notranslate"><span class="pre">winter</span></code> parameter. Should the VAV system only be used for summer cooling, then the <code class="docutils literal notranslate"><span class="pre">winter</span></code> parameter can be simply omitted.</p>
+<section id="zone-a">
+<h3>Zone A<a class="headerlink" href="#zone-a" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">zone_A</span> <span class="o">=</span> <span class="n">Zone</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;zone A&#39;</span><span class="p">,</span>
+    <span class="n">summer</span><span class="o">=</span><span class="n">Season</span><span class="p">(</span>
+        <span class="n">Q_sen</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">224_844</span><span class="p">,</span> <span class="s1">&#39;Btu / hr&#39;</span><span class="p">),</span>
+        <span class="n">Q_lat</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">56_000</span><span class="p">,</span> <span class="s1">&#39;Btu / hr&#39;</span><span class="p">),</span>
+        <span class="n">zone_air</span><span class="o">=</span><span class="n">HumidAir</span><span class="p">(</span><span class="n">Tdb</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">75</span><span class="p">,</span> <span class="s1">&#39;degF&#39;</span><span class="p">),</span> <span class="n">RH</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="s1">&#39;pct&#39;</span><span class="p">))</span>
+    <span class="p">),</span>
+    <span class="n">winter</span><span class="o">=</span><span class="n">Season</span><span class="p">(</span>
+        <span class="n">Q_sen</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="o">-</span><span class="mi">143_000</span><span class="p">,</span> <span class="s1">&#39;Btu / hr&#39;</span><span class="p">),</span>
+        <span class="n">Q_lat</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;Btu / hr&#39;</span><span class="p">),</span>
+        <span class="n">zone_air</span><span class="o">=</span><span class="n">HumidAir</span><span class="p">(</span><span class="n">Tdb</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">75</span><span class="p">,</span> <span class="s1">&#39;degF&#39;</span><span class="p">),</span> <span class="n">RH</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;pct&#39;</span><span class="p">))</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="zone-b">
+<h3>Zone B<a class="headerlink" href="#zone-b" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">zone_B</span> <span class="o">=</span> <span class="n">Zone</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;zone B&#39;</span><span class="p">,</span>
+    <span class="n">summer</span><span class="o">=</span><span class="n">Season</span><span class="p">(</span>
+        <span class="n">Q_sen</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">103_308</span><span class="p">,</span> <span class="s1">&#39;Btu / hr&#39;</span><span class="p">),</span>
+        <span class="n">Q_lat</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">20_000</span><span class="p">,</span> <span class="s1">&#39;Btu / hr&#39;</span><span class="p">),</span>
+        <span class="n">zone_air</span><span class="o">=</span><span class="n">HumidAir</span><span class="p">(</span><span class="n">Tdb</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">75</span><span class="p">,</span> <span class="s1">&#39;degF&#39;</span><span class="p">),</span> <span class="n">RH</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="s1">&#39;pct&#39;</span><span class="p">))</span>
+    <span class="p">),</span>
+    <span class="n">winter</span><span class="o">=</span><span class="n">Season</span><span class="p">(</span>
+        <span class="n">Q_sen</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">49_092</span><span class="p">,</span> <span class="s1">&#39;Btu / hr&#39;</span><span class="p">),</span>
+        <span class="n">Q_lat</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;Btu / hr&#39;</span><span class="p">),</span>
+        <span class="n">zone_air</span><span class="o">=</span><span class="n">HumidAir</span><span class="p">(</span><span class="n">Tdb</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">75</span><span class="p">,</span> <span class="s1">&#39;degF&#39;</span><span class="p">),</span> <span class="n">RH</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;pct&#39;</span><span class="p">))</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="create-vav-system">
+<h2>Create VAV System<a class="headerlink" href="#create-vav-system" title="Permalink to this headline">#</a></h2>
+<p>Besides the design data of the zones, the global design data about the outdoor air in summer and winter and the design volume flow rate of outdoor air ventilation must be specified.</p>
+<p><strong>Outdoor Air Condition on Summer and Winter Design Day</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">outdoor_air_summer</span> <span class="o">=</span> <span class="n">HumidAir</span><span class="p">(</span><span class="n">Tdb</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">97</span><span class="p">,</span> <span class="s1">&#39;degF&#39;</span><span class="p">),</span> <span class="n">Twb</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">76</span><span class="p">,</span> <span class="s1">&#39;degF&#39;</span><span class="p">))</span>
+<span class="n">outdoor_air_winter</span> <span class="o">=</span> <span class="n">HumidAir</span><span class="p">(</span><span class="n">Tdb</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="s1">&#39;degF&#39;</span><span class="p">),</span> <span class="n">RH</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;pct&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Design Volume Flow Rate of Outdoor Air Ventilation</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">V_vent</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="mi">2400</span><span class="p">,</span> <span class="s1">&#39;ft ** 3 / min&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Instantiate the <code class="docutils literal notranslate"><span class="pre">VAVSystem</span></code> Class with the Design Data</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">vav_system</span> <span class="o">=</span> <span class="n">VAVSystem</span><span class="p">(</span>
+    <span class="n">zones</span><span class="o">=</span><span class="p">[</span><span class="n">zone_A</span><span class="p">,</span> <span class="n">zone_B</span><span class="p">],</span>
+    <span class="n">outdoor_air_summer</span><span class="o">=</span><span class="n">outdoor_air_summer</span><span class="p">,</span>
+    <span class="n">outdoor_air_winter</span><span class="o">=</span><span class="n">outdoor_air_winter</span><span class="p">,</span>
+    <span class="n">V_vent</span><span class="o">=</span><span class="n">V_vent</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="cooling-design-day">
+<h2>COOLING DESIGN DAY<a class="headerlink" href="#cooling-design-day" title="Permalink to this headline">#</a></h2>
+<p>After instantiation of the <code class="docutils literal notranslate"><span class="pre">VAVSystem</span></code> class, call the method <code class="docutils literal notranslate"><span class="pre">design_summer</span></code>. This method can take a number of keyword arguments:</p>
+<ul class="simple">
+<li><p>the maximum allowed temperature difference between the supply air temperature and the zone air temperature in order to enable proper mixing of the supply air with the zone air: <code class="docutils literal notranslate"><span class="pre">dT_supply</span></code></p></li>
+<li><p>the pressure of the supply air fan: <code class="docutils literal notranslate"><span class="pre">supply_fan_pressure</span></code></p></li>
+<li><p>the efficiency of the supply air fan: <code class="docutils literal notranslate"><span class="pre">supply_fan_efficiency</span></code></p></li>
+<li><p>heat gain of the supply duct: <code class="docutils literal notranslate"><span class="pre">supply_duct_heat_gain</span></code></p></li>
+<li><p>the pressure of the return air fan: <code class="docutils literal notranslate"><span class="pre">return_fan_pressure</span></code></p></li>
+<li><p>the efficiency of the return air fan: <code class="docutils literal notranslate"><span class="pre">return_fan_efficiency</span></code></p></li>
+<li><p>heat gain of the return duct: <code class="docutils literal notranslate"><span class="pre">return_duct_gain</span></code></p></li>
+</ul>
+<p>These arguments are not mandatory and can be omitted if they are not known. The supply fan and return fan can only be specified after the volume flow rate of supply and return air have first been determined. As such, the first time the notebook would be executed without values for <code class="docutils literal notranslate"><span class="pre">supply_fan_pressure</span></code>, <code class="docutils literal notranslate"><span class="pre">supply_fan_efficiency</span></code>,…</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">summer_results</span> <span class="o">=</span> <span class="n">vav_system</span><span class="o">.</span><span class="n">design_summer</span><span class="p">(</span>
+    <span class="n">dT_supply</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="s1">&#39;delta_degF&#39;</span><span class="p">),</span>
+    <span class="n">supply_fan_pressure</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;inch_H2O_60F&#39;</span><span class="p">),</span>
+    <span class="n">supply_fan_efficiency</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="s1">&#39;pct&#39;</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The method <code class="docutils literal notranslate"><span class="pre">design_summer</span></code> returns a dictionary with the results as shown below. These results are all <code class="docutils literal notranslate"><span class="pre">Quantity</span></code> objects.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;cooling coil load&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">summer</span><span class="o">.</span><span class="n">cooling_coil</span><span class="o">.</span><span class="n">Q</span><span class="p">,</span>
+    <span class="s1">&#39;sensible cooling coil load&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">summer</span><span class="o">.</span><span class="n">cooling_coil</span><span class="o">.</span><span class="n">Q_sen</span><span class="p">,</span>
+    <span class="s1">&#39;latent cooling coil load&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">summer</span><span class="o">.</span><span class="n">cooling_coil</span><span class="o">.</span><span class="n">Q_lat</span><span class="p">,</span>
+    <span class="s1">&#39;supply air volume flow rate&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">summer</span><span class="o">.</span><span class="n">V_supply</span><span class="p">,</span>
+    <span class="s1">&#39;return air volume flow rate&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">summer</span><span class="o">.</span><span class="n">V_return</span><span class="p">,</span>
+    <span class="s1">&#39;system supply air temperature&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">summer</span><span class="o">.</span><span class="n">supply_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span>
+    <span class="s1">&#39;system return air temperature&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">summer</span><span class="o">.</span><span class="n">return_air</span><span class="o">.</span><span class="n">Tdb</span>
+<span class="p">}</span>
+<span class="k">return</span> <span class="n">results</span>
+</pre></div>
+</div>
+<p>To quickly show these results in a notebook you may use the (static) method <code class="docutils literal notranslate"><span class="pre">show_results_markdown</span></code> of the <code class="docutils literal notranslate"><span class="pre">VAVSystem</span></code> instance. For this you need to pass the returned results from <code class="docutils literal notranslate"><span class="pre">design_summer</span></code> together with a dictionary <code class="docutils literal notranslate"><span class="pre">units</span></code> containing the units in which you want the results  to be displayed and the number of decimals behind the decimal point, as is demonstrated below.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">(</span>
+    <span class="n">vav_system</span><span class="o">.</span><span class="n">show_results_markdown</span><span class="p">(</span>
+        <span class="n">summer_results</span><span class="p">,</span>
+        <span class="n">units</span><span class="o">=</span><span class="p">{</span>
+            <span class="s1">&#39;Q&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;Btu / hr&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;ft ** 3 / min&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="s1">&#39;K&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;degF&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>cooling coil load: <b>-545782 Btu/h</b></li><li>sensible cooling coil load: <b>-411416 Btu/h</b></li><li>latent cooling coil load: <b>-134114 Btu/h</b></li><li>supply air volume flow rate: <b>14750 ft³/min</b></li><li>return air volume flow rate: <b>15350 ft³/min</b></li><li>system supply air temperature: <b>55.0 °F</b></li><li>system return air temperature: <b>75.0 °F</b></li></ul></div></div>
+</div>
+<section id="psychrometric-chart">
+<h3>Psychrometric Chart<a class="headerlink" href="#psychrometric-chart" title="Permalink to this headline">#</a></h3>
+<p>The data attributes of the <code class="docutils literal notranslate"><span class="pre">summer</span></code> (and <code class="docutils literal notranslate"><span class="pre">winter</span></code>) attribute of the <code class="docutils literal notranslate"><span class="pre">VAVSystem</span></code> class are all accesible. The code below shows the <code class="docutils literal notranslate"><span class="pre">__init__</span></code> method of the <code class="docutils literal notranslate"><span class="pre">Summer</span></code> subclass of the <code class="docutils literal notranslate"><span class="pre">VAVSystem</span></code> class with all its data attributes. The names of the data attributes should speak for themselves.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outdoor_air</span><span class="p">:</span> <span class="n">HumidAir</span><span class="p">,</span> <span class="n">V_vent</span><span class="p">:</span> <span class="n">Quantity</span><span class="p">,</span> <span class="n">system</span><span class="p">:</span> <span class="s1">&#39;VAVSystem&#39;</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">outdoor_air</span> <span class="o">=</span> <span class="n">outdoor_air</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">m_vent</span> <span class="o">=</span> <span class="n">V_vent</span> <span class="o">*</span> <span class="n">outdoor_air</span><span class="o">.</span><span class="n">rho</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">system</span> <span class="o">=</span> <span class="n">system</span>  <span class="c1"># reference to the instance of the `VAVSystem` parent class</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">T_supply</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">),</span> <span class="s1">&#39;degC&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">supply_air</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">HumidAir</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">m_supply</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">),</span> <span class="s1">&#39;kg /s&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">V_supply</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">),</span> <span class="s1">&#39;kg /s&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">T_cold</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">),</span> <span class="s1">&#39;degC&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">cooled_air</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">HumidAir</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">m_return</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">),</span> <span class="s1">&#39;kg /s&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">V_return</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">),</span> <span class="s1">&#39;kg /s&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">return_air</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">HumidAir</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">recirculated_air</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">HumidAir</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">mixed_air</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">HumidAir</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">cooling_coil</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AirConditioningProcess</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">m_supply_part_load</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">),</span> <span class="s1">&#39;kg /s&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">V_supply_part_load</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">),</span> <span class="s1">&#39;kg /s&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Taking the appropriate data attributes, it is possible to draw the pyschrometric chart and plot the air conditioning processes in the VAV system.</p>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">chart</span> <span class="o">=</span> <span class="n">PsychrometricChart</span><span class="p">(</span><span class="n">fig_size</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">chart</span><span class="o">.</span><span class="n">plot_process</span><span class="p">(</span>
+    <span class="s1">&#39;mixing_chamber&#39;</span><span class="p">,</span>
+    <span class="n">StatePoint</span><span class="p">(</span><span class="n">vav_system</span><span class="o">.</span><span class="n">summer</span><span class="o">.</span><span class="n">outdoor_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">vav_system</span><span class="o">.</span><span class="n">summer</span><span class="o">.</span><span class="n">outdoor_air</span><span class="o">.</span><span class="n">W</span><span class="p">),</span>
+    <span class="n">StatePoint</span><span class="p">(</span><span class="n">vav_system</span><span class="o">.</span><span class="n">summer</span><span class="o">.</span><span class="n">return_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">vav_system</span><span class="o">.</span><span class="n">summer</span><span class="o">.</span><span class="n">return_air</span><span class="o">.</span><span class="n">W</span><span class="p">),</span>
+    <span class="n">StatePoint</span><span class="p">(</span><span class="n">vav_system</span><span class="o">.</span><span class="n">summer</span><span class="o">.</span><span class="n">mixed_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">vav_system</span><span class="o">.</span><span class="n">summer</span><span class="o">.</span><span class="n">mixed_air</span><span class="o">.</span><span class="n">W</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">chart</span><span class="o">.</span><span class="n">plot_process</span><span class="p">(</span>
+    <span class="s1">&#39;cooling coil&#39;</span><span class="p">,</span>
+    <span class="n">StatePoint</span><span class="p">(</span><span class="n">vav_system</span><span class="o">.</span><span class="n">summer</span><span class="o">.</span><span class="n">mixed_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">vav_system</span><span class="o">.</span><span class="n">summer</span><span class="o">.</span><span class="n">mixed_air</span><span class="o">.</span><span class="n">W</span><span class="p">),</span>
+    <span class="n">StatePoint</span><span class="p">(</span><span class="n">vav_system</span><span class="o">.</span><span class="n">summer</span><span class="o">.</span><span class="n">cooled_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">vav_system</span><span class="o">.</span><span class="n">summer</span><span class="o">.</span><span class="n">cooled_air</span><span class="o">.</span><span class="n">W</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="c1"># chart.plot_process(</span>
+<span class="c1">#     &#39;supply fan&#39;,</span>
+<span class="c1">#     StatePoint(vav_system.summer.cooled_air.Tdb, vav_system.summer.cooled_air.W),</span>
+<span class="c1">#     StatePoint(vav_system.summer.supply_air.Tdb, vav_system.summer.supply_air.W)</span>
+<span class="c1"># )</span>
+<span class="n">chart</span><span class="o">.</span><span class="n">plot_process</span><span class="p">(</span>
+    <span class="s1">&#39;zones&#39;</span><span class="p">,</span>
+    <span class="n">StatePoint</span><span class="p">(</span><span class="n">vav_system</span><span class="o">.</span><span class="n">summer</span><span class="o">.</span><span class="n">supply_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">vav_system</span><span class="o">.</span><span class="n">summer</span><span class="o">.</span><span class="n">supply_air</span><span class="o">.</span><span class="n">W</span><span class="p">),</span>
+    <span class="n">StatePoint</span><span class="p">(</span><span class="n">vav_system</span><span class="o">.</span><span class="n">summer</span><span class="o">.</span><span class="n">return_air</span><span class="o">.</span><span class="n">Tdb</span><span class="p">,</span> <span class="n">vav_system</span><span class="o">.</span><span class="n">summer</span><span class="o">.</span><span class="n">return_air</span><span class="o">.</span><span class="n">W</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">chart</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/vav_multizone_design_p2_27_0.png" src="_images/vav_multizone_design_p2_27_0.png" />
+</div>
+</div>
+</section>
+<section id="zone-info">
+<h3>Zone Info<a class="headerlink" href="#zone-info" title="Permalink to this headline">#</a></h3>
+<p>The zones, instances of the <code class="docutils literal notranslate"><span class="pre">Zone</span></code> class, are kept in a list inside the <code class="docutils literal notranslate"><span class="pre">VAVSystem</span></code> class. A <code class="docutils literal notranslate"><span class="pre">Zone</span></code> object has two members <code class="docutils literal notranslate"><span class="pre">summer</span></code> and <code class="docutils literal notranslate"><span class="pre">winter</span></code> that refer to an instance of the <code class="docutils literal notranslate"><span class="pre">Season</span></code> dataclass that contains the design data for the zone. From the implementation of the <code class="docutils literal notranslate"><span class="pre">Season</span></code> dataclass, it can be seen which data attributes are available. Again the names of the data attributes should speak for themselves.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Season</span><span class="p">:</span>
+    <span class="n">Q_sen</span><span class="p">:</span> <span class="n">Quantity</span>
+    <span class="n">Q_lat</span><span class="p">:</span> <span class="n">Quantity</span>
+    <span class="n">zone_air</span><span class="p">:</span> <span class="n">HumidAir</span>
+    <span class="n">m_exhaust</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;kg / s&#39;</span><span class="p">)</span>
+    <span class="n">m_supply</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Quantity</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">),</span> <span class="s1">&#39;kg / s&#39;</span><span class="p">))</span>
+    <span class="n">supply_air</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">HumidAir</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">return_air</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">HumidAir</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">m_return</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Quantity</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">m_supply</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">m_exhaust</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">V_supply</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Quantity</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">m_supply</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">supply_air</span><span class="o">.</span><span class="n">v</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Zone</span><span class="p">:</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">summer</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Season</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">winter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Season</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">reheat_coil</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AirConditioningProcess</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p><strong>Notes</strong><br></p>
+<ul class="simple">
+<li><p>Attribute <code class="docutils literal notranslate"><span class="pre">m_exhaust</span></code> may refer to local air exhaust of a zone.<br></p></li>
+<li><p>To get at the resulting air state (in particular air humidity) of the zones, the <code class="docutils literal notranslate"><span class="pre">return_air</span></code> attribute should be used, as the <code class="docutils literal notranslate"><span class="pre">zone_air</span></code> attribute is actually used to specify the desired state when instantiating the zones.</p></li>
+</ul>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;return air at </span><span class="si">{</span><span class="n">zone</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: &lt;b&gt;</span><span class="si">{</span><span class="n">zone</span><span class="o">.</span><span class="n">summer</span><span class="o">.</span><span class="n">return_air</span><span class="o">.</span><span class="n">Tdb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;degF&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.1f</span><span class="si">}</span><span class="s2"> TDB, &quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">zone</span><span class="o">.</span><span class="n">summer</span><span class="o">.</span><span class="n">return_air</span><span class="o">.</span><span class="n">RH</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;pct&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2"> RH&lt;/b&gt;, &quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;supply air volume flow rate: &lt;b&gt;</span><span class="si">{</span><span class="n">zone</span><span class="o">.</span><span class="n">summer</span><span class="o">.</span><span class="n">V_supply</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;ft ** 3 / min&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+    <span class="k">for</span> <span class="n">zone</span> <span class="ow">in</span> <span class="n">vav_system</span><span class="o">.</span><span class="n">zones</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>return air at zone A: <b>75.0 °F TDB, 50 % RH</b>, supply air volume flow rate: <b>10106 ft³/min</b></li><li>return air at zone B: <b>75.0 °F TDB, 49 % RH</b>, supply air volume flow rate: <b>4644 ft³/min</b></li></ul></div></div>
+</div>
+</section>
+</section>
+<section id="heating-design-day">
+<h2>HEATING DESIGN DAY<a class="headerlink" href="#heating-design-day" title="Permalink to this headline">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">winter_results</span> <span class="o">=</span> <span class="n">vav_system</span><span class="o">.</span><span class="n">design_winter</span><span class="p">(</span>
+    <span class="n">T_supply_max</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">105</span><span class="p">,</span> <span class="s1">&#39;degF&#39;</span><span class="p">),</span>
+    <span class="n">supply_fan_pressure</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">3.0</span><span class="p">,</span> <span class="s1">&#39;inch_H2O_60F&#39;</span><span class="p">),</span>
+    <span class="n">supply_fan_efficiency</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">60.0</span><span class="p">,</span> <span class="s1">&#39;pct&#39;</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">(</span>
+    <span class="n">vav_system</span><span class="o">.</span><span class="n">show_results_markdown</span><span class="p">(</span>
+        <span class="n">winter_results</span><span class="p">,</span> 
+        <span class="n">units</span><span class="o">=</span><span class="p">{</span>
+            <span class="s1">&#39;Q&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;Btu / hr&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;ft ** 3 / min&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="s1">&#39;K&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;degF&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>preheat coil peak load: <b>137878 Btu/h</b></li><li>preheat coil load: <b>29050 Btu/h</b></li><li>total reheat coil load: <b>249846 Btu/h</b></li><li>cooling coil load: <b>0 Btu/h</b></li><li>sensible cooling coil load: <b>0 Btu/h</b></li><li>latent cooling coil load: <b>0 Btu/h</b></li><li>supply air volume flow rate: <b>8805 ft³/min</b></li><li>return air volume flow rate: <b>9075 ft³/min</b></li><li>system supply air temperature: <b>59.2 °F</b></li><li>system return air temperature: <b>75.0 °F</b></li></ul></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">zone</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: supply air temperature = &lt;b&gt;</span><span class="si">{</span><span class="n">zone</span><span class="o">.</span><span class="n">winter</span><span class="o">.</span><span class="n">supply_air</span><span class="o">.</span><span class="n">Tdb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;degF&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.1f</span><span class="si">}</span><span class="s2">&lt;/b&gt;, &quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;reheat load = &lt;b&gt;</span><span class="si">{</span><span class="n">zone</span><span class="o">.</span><span class="n">reheat_coil</span><span class="o">.</span><span class="n">Q_sen</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;Btu / hr&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2">&lt;/b&gt;, &quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;supply air volume flow rate = &lt;b&gt;</span><span class="si">{</span><span class="n">zone</span><span class="o">.</span><span class="n">winter</span><span class="o">.</span><span class="n">V_supply</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;ft ** 3 / min&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.0f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+    <span class="k">for</span> <span class="n">zone</span> <span class="ow">in</span> <span class="n">vav_system</span><span class="o">.</span><span class="n">zones</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>zone A: supply air temperature = <b>96.2 °F</b>, reheat load = <b>249846 Btu/h</b>, supply air volume flow rate = <b>6465 ft³/min</b></li><li>zone B: supply air temperature = <b>59.2 °F</b>, reheat load = <b>0 Btu/h</b>, supply air volume flow rate = <b>2772 ft³/min</b></li></ul></div></div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="vav_multizone_design_p1.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Design of a Multi-Zone VAV System (the Long Way)</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="vav_multizone_analysis.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Analysis of a Multi-Zone VAV System at Part-Load</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Tom Christiaens<br/>
+  
+      &copy; Copyright 2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>
