@@ -21,7 +21,7 @@ ja.set_css()
 
 # This notebook demonstrates how basic air conditioning processes can be solved with the `hvac.air_conditioning` package by going through a number of classic textbook problems.
 
-# Air conditioning processes in the package `hvac.air_conditioning`are modeled by the `AirConditioningProcess` class.
+# Air conditioning processes in the package `hvac.air_conditioning` are modeled by the `AirConditioningProcess` class.
 
 # In[3]:
 

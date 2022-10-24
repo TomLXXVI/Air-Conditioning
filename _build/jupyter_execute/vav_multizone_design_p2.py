@@ -257,8 +257,8 @@ chart.show()
 # 
 
 # > **Notes**<br>
-# >- Attribute `m_exhaust` may refer to local air exhaust of a zone.<br>
-# >- To get at the resulting air state (in particular air humidity) of the zones, the `return_air` attribute should be used, as the `zone_air` attribute is actually used to specify the desired state when instantiating the zones.
+# >- Attribute `m_exhaust` may refer to local exhaust of air in a zone.<br>
+# >- To get at the resulting air state (in particular air humidity) of a zone, the `return_air` attribute should be used, as the `zone_air` attribute is used to specify the desired zone air state when instantiating the zone.
 
 # In[13]:
 
