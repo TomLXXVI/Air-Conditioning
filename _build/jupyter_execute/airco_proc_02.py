@@ -19,7 +19,7 @@ import jupyter_addons as ja
 ja.set_css()
 
 
-# This notebook further explores the use of the `AirConditioningProcess` class and the `AdiabaticMixing` class by solving a few sample exercises from the book **Principles of Heating, Ventilation and Air Conditioning** by *Nihal E Wijeysundera* (2016), Chapter 5, in which several air conditioning processes are combined. 
+# This notebook further explores the use of the `AirConditioningProcess` class and the `AdiabaticMixing` class by solving a few sample exercises taken from the book **Principles of Heating, Ventilation and Air Conditioning** by *Nihal E Wijeysundera* (2016), Chapter 5, in which multiple air conditioning processes are combined. 
 # 
 # First we import what we will need further on:
 
@@ -112,7 +112,7 @@ ja.display_list([
 
 # **Heating coil**
 # 
-# In a sensible heating process there is no water transfer to the air stream. Therefore, we can set the mass transfer of water `m_w` and the enthalpy of water `h_w` to zero.
+# In a sensible heating process there is no water transfer to the air stream. Therefore, we can set the parameter for mass transfer of water `m_w` and/or the parameter for enthalpy of water `h_w` to zero. However, as both the inlet and outlet air states in this example are known to have the same humidity level, we can also simply omit these two parameters.
 
 # In[10]:
 
@@ -121,8 +121,6 @@ heater = AirConditioningProcess(
     air_in=mixed_air_state,
     air_out=supply_air_state,
     m_da=Q_(30.0, 'kg / min'),
-    m_w=Q_(0.0, 'kg / min'),
-    h_w=Q_(0.0, 'J / kg')
 )
 
 ja.display_list([
@@ -234,7 +232,7 @@ psych_chart.show()
 
 # *The rate of sensible heat gain and the rate of moisture gain by a space are 23 kW and 0.0024 kg/s respectively. The space is maintained at 24°C db-temperature and 50 % relative humidity. The air supplied to the space is at a db-temperature of 15°C. Assume that the moisture entering the space has an enthalpy of 2555 kJ/kg. The pressure is constant at 101.3 kPa. Calculate (1) the relative humidity, the wb-temperature, and the dry air mass flow rate of air supplied, (2) the refrigeration capacity of the cooling coil, and (3) the bypass factor and the apparatus dew-point of the cooling coil.*
 
-# **Sensible and latent heat load of the room**
+# **Sensible and latent heat load of the space**
 
 # In[18]:
 
@@ -275,7 +273,7 @@ ja.display_list([
 T_sup = Q_(15.0, 'degC')
 
 
-# **Room air = return air to cooler**
+# **Space air = return air to cooler**
 
 # In[23]:
 
@@ -285,7 +283,7 @@ return_air = HumidAir(Tdb=Q_(24.0, 'degC'), RH=Q_(50.0, 'pct'))
 
 # **Space condition line**
 # 
-# The SHR of the room determines the slope $\Delta W / \Delta T$ of the "space condition line" in the psychrometric diagram. The state of the supply air must lie on this line in order to compensate the sensible and latent cooling load of the space. As the dry-bulb temperature of the supply air is given and the state of the room air is known, the equation of the space condition line can be solved for the missing humidity ratio of the supply air.
+# The SHR of the room determines the slope $\Delta W / \Delta T$ of the "space condition line" in the psychrometric diagram as is shown below. The state of the supply air must lie on this line in order to compensate for both the sensible and latent cooling load of the space. As the dry-bulb temperature of the supply air is given and the state of the space air is known, the equation of the space condition line can be solved for the missing humidity ratio of the supply air.
 
 # In[24]:
 
@@ -307,21 +305,21 @@ psych_chart.plot_space_condition_line(
 psych_chart.show()
 
 
-# From the sensible heat balance, also the mass flow rate of dry air `m_da` can be solved for, knowing the dry-bulb temperatures of supply and return air and the sensible heat load `Q_sen` of the room.
+# From the sensible heat balance of the space the dry air mass flow rate `m_da` of the supply air can also be solved, knowing the dry-bulb temperature of both the supply and return air and the sensible heat load `Q_sen` of the space.
 
 # In[25]:
 
 
-room = AirConditioningProcess(
+space = AirConditioningProcess(
     T_ai=T_sup,
     air_out=return_air,
     SHR=SHR,
     Q_sen=Q_sen
 )
 
-supply_air = room.air_in
+supply_air = space.air_in
 
-m_da = room.m_da
+m_da = space.m_da
 
 ja.display_list([
     f"relative humidity of air supplied = <b>{supply_air.RH.to('pct'):~P.0f}</b>",
@@ -332,7 +330,7 @@ ja.display_list([
 
 # **Refrigeration capacity of the air cooler**
 # 
-# The return air from the room enters the cooler and the supply air to the room leaves the cooler. We will ignore the enthalpy of the condensate in the cooler, so we set `h_w` to zero.
+# The return air from the room enters the cooler and the supply air to the room leaves the cooler. We will ignore the enthalpy of the condensate draining from the cooler, so we set `h_w` to zero.
 
 # In[26]:
 
@@ -423,7 +421,7 @@ psych_chart.plot_space_condition_line(
 psych_chart.show()
 
 
-# > We note that the space condition line does not intersect the saturation line, while air cooling implies that the leaving air from the air cooler lies on a straight line that intersects the saturation line in the ADP of the air cooler.
+# > It should be noted that the space condition line does not intersect the saturation line as in the previous example, while at the same time air cooling implies that the leaving air from the air cooler lies on a straight line that intersects the saturation line at the ADP of the air cooler.
 
 # **Air cooler outlet**
 
@@ -435,7 +433,7 @@ cooler_out = HumidAir(Tdb=Q_(12.0, 'degC'), RH=Q_(90.0, 'pct'))
 
 # **State and mass flow rate of supply air to the space**
 # 
-# The state of the space air (`air_out`) and the SHR of the space determine the "space condition line". The supply air state must lie on this line to compensate for the sensible as well as the latent cooling load of the space. The humidity ratio of the entering supply air (`W_ai`) is known, as the humidity ratio of the air leaving the air cooler will remain constant through the reheat coil, which is a sensible heating process. From the equation of the space condition line, the unknown dry-bulb temperature of the supply air can be solved for. Putting this result in the sensible heat balance of the space, will give us also the required mass flow rate of supply air, as we know the sensible heat load (`Q_sen`) of the space.
+# The state of the space air and the SHR of the space determine the "space condition line". The supply air state must lie on this line to compensate for the sensible as well as the latent cooling load of the space. Only the humidity ratio of the entering supply air is known, as the humidity ratio of the air leaving the air cooler will remain constant through the reheat coil, which is a sensible heating process. However, from the equation of the space condition line, the unknown dry-bulb temperature of the supply air can be solved, as graphically shown on the psychrometric chart below. Using this solution next in the sensible heat balance of the space, also enables to find the required mass flow rate of supply air, as the sensible heat load (`Q_sen`) of the space is known.
 
 # In[32]:
 
@@ -469,9 +467,7 @@ space = AirConditioningProcess(
     SHR=SHR,
     Q_sen=Q_sen
 )
-
 supply_air = space.air_in
-
 m_da = space.m_da
 
 ja.display_list([
@@ -523,7 +519,7 @@ ja.display_list([
 
 # **Check the overall energy balance**
 # 
-# The sum of heat removed from the system by the cooling coil and the energy supplied by the reheating coil should balance the total heat load on the space (= `Q_sen` + `Q_lat`).
+# The sum of heat removed from the system by the cooling coil and the energy supplied by the reheating coil should balance the total heat load of the space (= `Q_sen` + `Q_lat`).
 
 # In[36]:
 
@@ -636,7 +632,7 @@ ja.display_list([
 
 # **State of supply air**
 # 
-# With the state of the return air known, the state of the supply air can now be calculated from the sensible and latent heat balance of the room. The enthalpy of water `h_w` in the latent heat balance will be ignored.
+# With the state of the return air fully known, the state of the supply air can now be calculated from the sensible and latent heat balance of the room. The enthalpy of water `h_w` in the latent heat balance will be ignored.
 
 # In[44]:
 
@@ -648,7 +644,6 @@ p2 = AirConditioningProcess(
     Q_lat=Q_lat,
     h_w=Q_(0.0, 'J / kg')
 )
-
 supply_air = p2.air_in
 
 ja.display_list([
@@ -813,8 +808,8 @@ m_supply = space.m_da
 supply_air = space.air_in
 
 ja.display_list([
-    f"mass flow rate of supply air: {m_supply.to('kg / s'):~P.3f}",
-    f"supply air: {supply_air.Tdb.to('degC'):~P.1f}, {supply_air.W.to('g / kg'):~P.0f}"
+    f"mass flow rate of supply air: <b>{m_supply.to('kg / s'):~P.3f}</b>",
+    f"supply air: <b>{supply_air.Tdb.to('degC'):~P.1f} TDB, {supply_air.W.to('g / kg'):~P.0f}</b>"
 ])
 
 
@@ -839,7 +834,7 @@ mixing_chamber = AdiabaticMixing(
 mixed_air = mixing_chamber.stream_out.state
 
 ja.display_list([
-    f"mixed air: {mixed_air.Tdb.to('degC'):~P.1f}, {mixed_air.W.to('g / kg'):~P.0f}"
+    f"mixed air: <b>{mixed_air.Tdb.to('degC'):~P.1f} TDB, {mixed_air.W.to('g / kg'):~P.0f}</b>"
 ])
 
 
@@ -857,8 +852,8 @@ preheater = AirConditioningProcess(
 preheated_air = preheater.air_out
 
 ja.display_list([
-    f"preheater load: {preheater.Q.to('kW'):~P.3f}",
-    f"preheated air: {preheated_air.Tdb.to('degC'):~P.1f}, {preheated_air.W.to('g / kg'):~P.0f}"
+    f"preheater load: <b>{preheater.Q.to('kW'):~P.3f}</b>",
+    f"preheated air: <b>{preheated_air.Tdb.to('degC'):~P.1f} TDB, {preheated_air.W.to('g / kg'):~P.0f}</b>"
 ])
 
 
@@ -881,9 +876,9 @@ air_washer = AirConditioningProcess(
 humidified_air = air_washer.air_out
 
 ja.display_list([
-    f"mass flow rate of water in air washer: {air_washer.m_w.to('kg / s'):~P.3f}",
-    f"saturation effectiveness of air washer: {air_washer.beta.to('pct'):~P.0f}",
-    f"humidified air: {humidified_air.Tdb.to('degC'):~P.1f}, {humidified_air.W.to('g / kg'):~P.0f}"
+    f"mass flow rate of water in air washer: <b>{air_washer.m_w.to('kg / s'):~P.3f}</b>",
+    f"saturation effectiveness of air washer: <b>{air_washer.beta.to('pct'):~P.0f}</b>",
+    f"humidified air: <b>{humidified_air.Tdb.to('degC'):~P.1f} TDB, {humidified_air.W.to('g / kg'):~P.0f}</b>"
 ])
 
 
@@ -899,8 +894,8 @@ reheater = AirConditioningProcess(
 )
 
 ja.display_list([
-    f"reheater load: {reheater.Q.to('kW'):~P.3f}",
-    f"supply air: {supply_air.Tdb.to('degC'):~P.1f}, {supply_air.W.to('g / kg'):~P.0f}"
+    f"reheater load: <b>{reheater.Q.to('kW'):~P.3f}</b>",
+    f"supply air: <b>{supply_air.Tdb.to('degC'):~P.1f} TDB, {supply_air.W.to('g / kg'):~P.0f}</b>"
 ])
 
 

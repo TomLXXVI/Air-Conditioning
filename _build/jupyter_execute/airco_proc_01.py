@@ -19,9 +19,9 @@ import jupyter_addons as ja
 ja.set_css()
 
 
-# This notebook shows how basic air conditioning processes are handled with the `hvac.air_conditioning` package by going through a number of classic textbook problems.
+# This notebook demonstrates how basic air conditioning processes can be solved with the `hvac.air_conditioning` package by going through a number of classic textbook problems.
 
-# Air conditioning processes in package `hvac.air_conditioning`are modeled by the `AirConditioningProcess` class.
+# Air conditioning processes in the package `hvac.air_conditioning`are modeled by the `AirConditioningProcess` class.
 
 # In[3]:
 
@@ -29,7 +29,7 @@ ja.set_css()
 from hvac.air_conditioning import AirConditioningProcess
 
 
-# In order to use this class, other classes from the `hvac` package will (or may) be needed:
+# Together with this class some other classes from the `hvac` package will be needed.
 
 # In[4]:
 
@@ -39,12 +39,12 @@ from hvac.fluids import HumidAir, Fluid
 from hvac.charts import PsychrometricChart, StatePoint
 
 
-# - Class `Quantity` represents a physical quantity. This class comes from the third-party package [**Pint**](https://pint.readthedocs.io/en/stable/). 
-# - Air conditioning is all about the conditioning of humid air. Humid air is represented by the class `HumidAir`, which offers an object oriented wrapper around the function `HAPropsSI` of the third-party package [**CoolProp**](http://www.coolprop.org/).
-# - Processes such as humidification and dehumidification imply the presence of water. To represent water we will use the class `Fluid`, which is a wrapper around the low-level user interface of CoolProp.
-# - The classes `PsychrometricChart` and `StatePoint` can be used to draw airconditioning processes on a psychrometric chart.
+# - Class `Quantity` represents a physical quantity and it comes from a third-party package called [**Pint**](https://pint.readthedocs.io/en/stable/).
+# - Air conditioning is all about the conditioning of humid air. Humid air is represented by the class `HumidAir`, which forms an object-oriented wrapper around the function `HAPropsSI` of the third-party package [**CoolProp**](http://www.coolprop.org/).
+# - Processes like humidification and dehumidification imply the presence of water. To represent water we will use the `Fluid` class, which is also a wrapper around the [low-level user interface of CoolProp](http://www.coolprop.org/coolprop/LowLevelAPI.html).
+# - The `PsychrometricChart` and `StatePoint` classes can be used to draw airconditioning processes on a psychrometric chart.
 
-# To get a representation of a fluid, we instantiate the `Fluid` class with the name of the fluid that we need, in this case being water:
+# To get a representation of a specific fluid, the `Fluid` class is instantiated with the name of the specific fluid, which is water in this case:
 
 # In[5]:
 
@@ -52,7 +52,7 @@ from hvac.charts import PsychrometricChart, StatePoint
 Water = Fluid('Water')
 
 
-# > Any fluid can be represented this way, as long as the fluid name is known by CoolProp. CoolProp's documentation has a list of the fluids it knows about.
+# > Any fluid can be "created" this way, as long as the fluid name is known by CoolProp. A [list of the available fluids](http://www.coolprop.org/fluid_properties/PurePseudoPure.html#list-of-fluids) can be found in CoolProp's documentation.
 
 # Before we start demonstrating the use of the `AirConditioningProcess` class, we define a shortcut for creating `Quantity` instances:
 
@@ -88,7 +88,7 @@ air_out = HumidAir(Tdb=Q_(41, 'degC'), W=air_in.W)
 
 # **Dry air mass flow rate through heating coil**
 # - air volume flow rate at entrance of battery = 1.5 m³/s
-# - dry-air density `rho` of inlet air is known from the inlet condition of air
+# - the dry-air density `rho` of the inlet air is known from the inlet condition of air
 
 # In[9]:
 
@@ -99,7 +99,7 @@ m_da = air_in.rho * V_a
 
 # **Heating coil load**
 # 
-# Knowing the state of both the inlet and outlet air and the mass flow rate of air flowing through the heating coil, the sensible heating process can be defined. To retrieve the load on the heating coil, we first create an instance of the `AirConditioningProcess` class, passing the known process parameters.
+# Knowing the state of both the inlet and outlet air and the mass flow rate of air flowing through the heating coil, the sensible heating process can be defined. To retrieve the load on the heating coil, we first create an instance of the `AirConditioningProcess` class, passing it the known process parameters.
 
 # In[10]:
 
@@ -121,7 +121,7 @@ ja.display_list([f"heating coil load = <b>{heating_coil.Q.to('kW'):~P.3f}</b>"])
 
 # **Psychrometric chart**
 # 
-# The sensible heating process can also be drawn on a psychrometric chart. The code below shows how to this. First, an instance of the `PsychrometricChart` class must be created. Then its method `plot_process` can be called. You must give the process a meaningful name and specify its start and end point. A point on the psychrometric chart, of which the coordinates are the dry-bulb temperature `Tdb` and the absolute humidity ratio `W`, is represented by a `StatePoint` object. To display the chart on screen, the method `show` on the `PsychrometricChart` object needs to be called.
+# The sensible heating process can be drawn on a psychrometric chart. The code below shows how to do this. First, an instance of the `PsychrometricChart` class is created. Then its method `plot_process` is called. The process to be drawn is given a meaningful name and its start and end point are specified. A point on the psychrometric chart, of which the coordinates are dry-bulb temperature `Tdb` and absolute humidity ratio `W`, is represented by a `StatePoint` object. To display the chart, the method `show` on the `PsychrometricChart` object is called.
 
 # In[12]:
 
@@ -161,7 +161,7 @@ air_out = HumidAir(Tdb=Q_(12.5, 'degC'), W=Q_(8.336, 'g / kg'))
 
 # **Dry air mass flow rate through cooling coil**
 # - air volume flow rate at entrance of battery = 1.5 m³/s
-# - dry-air density `rho` of inlet air is known from the inlet air state
+# - the dry-air density `rho` of the inlet air is known from the inlet air state
 
 # In[15]:
 
@@ -172,7 +172,7 @@ m_da = air_in.rho * V
 
 # **Cooling coil load**
 # 
-# We will ignore the small energy content of the condensate draining from the cooling coil surface. For this we set the parameters `m_w` (i.e. the mass flow rate of water condensate) and `h_w` (i.e. the enthalpy of the condensate) to zero.
+# The small energy content of the condensate draining from the cooling coil surface will be ignored. For this we set the parameters `m_w` (i.e. the mass flow rate of water condensate) and `h_w` (i.e. the enthalpy of the condensate) to zero.
 
 # In[16]:
 
@@ -190,7 +190,7 @@ ja.display_list([f"cooling load = <b>{air_cooler.Q.to('kW'):~P.3f}</b>"])
 
 # **Apparatus dew point (ADP) temperature**
 
-# The "apparatus dew point" (ADP) is the point on the psychrometric diagram where the cooling process line intersects the saturation line of humid air. As such, the relative humidity at the ADP is always 100 %. To fully determine the state of the ADP it therfore suffices to find its dry-bulb temperature. After the air cooling process has been defined and is fully determined, we can access the ADP through the property `ADP` of the `AirConditioningProcess` object.
+# The "apparatus dew point" (ADP) of a cooling coil is the point on the psychrometric diagram where the cooling process line intersects the saturation line of humid air. The relative humidity in the ADP is therefore always 100 %, which means it is sufficient to find its dry-bulb temperature. After the air cooling process has been defined and is fully determined (i.e. it is solvable), we can access the ADP through the property `ADP` of our `AirConditioningProcess` object.
 
 # In[17]:
 
@@ -202,7 +202,7 @@ ja.display_list([f"ADP temperature = <b>{ADP.Tdb.to('degC'):~P.1f}</b>"])
 
 # **Contact factor**
 
-# The cooling process in a real air cooling coil could be considered as an adiabatic mixing process of an air stream flowing through a "perfect" air cooling coil, where it is cooled to the ADP, and an air stream that bypasses the "perfect" air cooler, thus remaining at the inlet air state. The contact factor, designated by `beta`, is the fraction of the air that goes through the "perfect" air cooling coil.
+# The cooling process in a real air cooling coil could be considered as an adiabatic mixing process of an air stream flowing through a "perfect" air cooling coil, where it is cooled to the ADP of the cooling coil, and an air stream that bypasses the "perfect" air cooling coil, thus remaining at the inlet air state. The contact factor, designated by `beta`, is then defined as the fraction of the air that passes through the "perfect" air cooling coil.
 
 # In[18]:
 
@@ -228,9 +228,9 @@ psych_chart.show()
 
 # ## 3. Evaporative Cooling Process (1)
 
-# *Ambient air at 38°C db-temperature and 20°C wb-temperature enters an evaporative cooler with a dry air mass flow rate of 0.75 kg/s. The pressure is constant at 95 kPa. The air leaves at a db-temperature of 25°C. Calculate (1) the relative humidity of the air at inlet, (2) the relative humidity of the air at exit, (3) the rate of flow of water to the cooler, and (4) the saturation effectiveness of the cooler.*
+# *Ambient air at 38°C db-temperature and 20°C wb-temperature enters an evaporative cooler with a dry air mass flow rate of 0.75 kg/s. The pressure is constant at 95 kPa. The air leaves at a db-temperature of 25°C. Calculate (1) the relative humidity of the air at the inlet, (2) the relative humidity of the air at the exit, (3) the rate of flow of water to the cooler, and (4) the saturation effectiveness of the cooler.*
 
-# > Notice that the atmospheric pressure is given to be 95 kPa, instead of the standard atmospheric pressure (101.325 kPa). By default the `HumidAir` class determines the state of humid air at standard atmospheric pressure  (i.e. at sea level). In that case, passing two input state properties to the constructor of the `HumidAir` class is sufficient to determine the state of humid air. If the atmospheric pressure deviates from standard pressure, we also need to pass the correct atmospheric pressure to the constructor, using its parameter `P`.
+# > Notice that the atmospheric pressure is given to be 95 kPa, instead of standard atmospheric pressure (101.325 kPa). By default the `HumidAir` class determines the state of humid air at standard atmospheric pressure  (i.e. at sea level). In that case, passing only two input state properties to the constructor of the `HumidAir` class is sufficient to determine the state of the humid air. However, if the atmospheric pressure deviates from standard pressure, we also need to pass the actual atmospheric pressure to the constructor, using parameter `P`.
 
 # **State of air entering the evaporative cooler**
 
@@ -260,7 +260,7 @@ ja.display_list([
 
 # **Make-up water**
 # 
-# We assume that under steady-state the liquid water being supplied to the cooler has a temperature that is equal to the wet-bulb temperature of the process. The wet-bulb temperature of the entering air is theoretically the lowest temperature that can be attained by evaporative cooling in an adiabatic saturator.
+# It is reasonably assumed that under steady-state operation the liquid make-up water being supplied to the cooler has a temperature that is equal to the wet-bulb temperature of the process. Theoretically, the wet-bulb temperature of the entering air is the lowest temperature that can be attained by evaporative cooling in an adiabatic saturator.
 
 # In[22]:
 
@@ -270,17 +270,17 @@ water = Water(T=Q_(20.0, 'degC'), P=Q_(95.0, 'kPa'))
 
 # **Saturated state of leaving air and ADP**
 # 
-# In an adiabatic saturator (i.e. the most efficient evaporative cooler) the air stream would continue to absorb water vapor, while being further cooled due to the evaporation of water that is taking sensible heat from the air, until the air is fully saturated. Once the air is fully saturated (RH = 100%), the energy transfer between air and water will cease, as the air cannot take up any more water vapor. At this saturated state the dry-bulb temperature of the air stream at the outlet of the adiabatic saturator will be maximally reduced to the wet-bulb temperature. This saturated state is here denoted by `ADP`, in analogy with the "Apparatus Dew Point" of an air cooler.
+# In an adiabatic saturator the air stream, while being cooled due to the evaporation of water that is taking sensible heat from the air, would continue to absorb water vapor until the air is fully saturated. Once fully saturated (RH = 100%) the energy transfer between air and water will cease, as the air cannot take up any more water vapor. At this saturated state the dry-bulb temperature of the air stream at the outlet of the adiabatic saturator will be maximally reduced to the wet-bulb temperature of the entering air. This saturated state, marked by a point on the saturation line of humid air, is denoted by `ADP`, in analogy with the "Apparatus Dew Point" of an air cooler.
 
 # In[23]:
 
 
-adp = HumidAir(Tdb=air_in.Twb, RH=Q_(100.0, 'pct'))
+adp = HumidAir(Tdb=air_in.Twb, RH=Q_(100.0, 'pct'), P=Q_(95, 'kPa'))
 
 
 # **Evaporative cooling**
 # 
-# In an evaporative cooler there is no heat transfer between the system of air and water and its environment, so `Q` must be set to zero. From the heat balance the mass flow rate `m_w` at which water evaporates in the air stream can be solved. To get at the saturation effectiveness of the evaporative cooler, we need to pass the `ADP` state of the air (i.e. the saturated state of the air that would be attained in an adiabatic saturator). The saturation effectiveness is here denoted by `beta`, in analogy with the contact factor of an air cooling coil.
+# In an evaporative cooler there is no external heat transfer between the system of air and water and its environment, so `Q` must be set to zero. From an energy balance of the system the mass flow rate `m_w` at which water evaporates in the air stream can be solved. To get at the saturation effectiveness of the evaporative cooler, we need to pass the `ADP` state of the air (i.e. the saturated state of the air that would be attained in an adiabatic saturator). The saturation effectiveness is denoted by `beta`, in analogy with the contact factor of an air cooling coil.
 
 # In[24]:
 
@@ -315,8 +315,8 @@ air_in = HumidAir(Tdb=Q_(15.0, 'degC'), Twb=Q_(10.0, 'degC'))
 
 
 # **Dry air mass flow rate through the spray chamber**
-# - Volume flow rate of inlet air = 1.5 m<sup>3</sup>/s
-# - Density `rho` of inlet air is known from given state of inlet air
+# - volume flow rate of inlet air = 1.5 m<sup>3</sup>/s
+# - density `rho` of inlet air is known from given state of inlet air
 
 # In[26]:
 
@@ -327,7 +327,7 @@ m_da = air_in.rho * V_moist
 
 # **State of air leaving the spray chamber**
 # 
-# Besides the inlet air state, the air washer efficiency, and the mass flow rate of dry air, we also know from the problem statement that no heat transfer is taking place in the air washer between the air stream and the environment (i.e. adiabatic process). Consequently, `Q` can be set to zero. The ADP of the air washer follows from the wet-bulb temperature of the air entering the spray chamber. As the ADP is situated on the saturation line of humid air, its relative humidity equals 100 %.
+# Besides the inlet air state, the air washer efficiency, and the mass flow rate of dry air, it is also follows from the problem statement that no heat transfer is taking place in the air washer between the air stream and the environment (i.e. adiabatic process). Consequently, `Q` can be set to zero. The ADP of the air washer follows from the wet-bulb temperature of the air entering the spray chamber. As the ADP is situated on the saturation line of humid air, its relative humidity equals 100 %.
 
 # In[27]:
 
@@ -417,7 +417,7 @@ water = Water(T=Q_(100.0, 'degC'), x=Q_(0.0, 'pct'))
 
 # **State of air leaving the spray chamber**
 # 
-# In a spray chamber only water is injected into the air stream. No heat is transferred to or extracted from the air stream, so `Q` is zero.
+# In a spray chamber only water is injected into the air stream. No external heat is transferred to or extracted from the air stream, so `Q` can be set to zero.
 
 # In[34]:
 
@@ -649,7 +649,7 @@ outdoor_air_state = HumidAir(Tdb=Q_(34.0, 'degC'), RH=Q_(60.0, 'pct'))
 
 # **Adiabatic mixing**
 
-# The adiabatic mixing of two air streams is modeled by the `AdiabaticMixing` class. Air streams are modeled by the `AirStream` class. An `AirStream` instance combines the air state and the mass flow rate of an air stream.
+# The adiabatic mixing of two incoming air streams is modeled by the `AdiabaticMixing` class. Air streams are modeled by the `AirStream` class. An `AirStream` instance combines the air state and the mass flow rate of an air stream.
 
 # In[50]:
 
@@ -657,17 +657,17 @@ outdoor_air_state = HumidAir(Tdb=Q_(34.0, 'degC'), RH=Q_(60.0, 'pct'))
 from hvac.air_conditioning import AirStream, AdiabaticMixing
 
 
-# The state and mass flow rate of the return air stream and the outdoor air stream are known. We know already the mass flow rate of the resulting supply air stream, but we still need to find its state. We initialize the three air streams with the data that we have at this stage.
+# The state and mass flow rate of the two incoming air streams -the return air stream and the outdoor air stream- are known from the problem statement. Only the mass flow rate of the outgoing, mixed air stream -the supply air stream- is known.
 
 # In[51]:
 
 
 return_air = AirStream(state=return_air_state, m_da=Q_(0.7, 'kg / s'))
 outdoor_air = AirStream(state=outdoor_air_state, m_da=Q_(0.3, 'kg / s'))
-supply_air = AirStream(m_da=Q_(1.0, 'kg / s'))  # state unknown
+supply_air = AirStream(m_da=Q_(1.0, 'kg / s'))  # state still unknown
 
 
-# The `AdiabaticMixing` class can handle the adiabatic mixing of two incoming air streams (`in1` and `in2`); in this case the adiabatic mixing of return air and outdoor air in a mixing chamber. The outgoing air stream, which in this case is the supply air, of which only the mass flow rate is known at this moment, is assigned to parameter `out`.
+# The incoming air streams are passed to the parameters `in1` and `in2` of the `AdiabaticMixing` class constructor. The outgoing, mixed air stream is assigned to parameter `out`.
 
 # In[52]:
 
